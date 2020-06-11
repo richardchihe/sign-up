@@ -15,7 +15,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Link } from 'react-router-dom';
 
-import { AppStateContext, AppDispatchContext } from '../contexts/app.context';
+import { AppDispatchContext } from '../contexts/app.context';
 import AuthService from "../services/auth.service";
 
 const useStyles = makeStyles((theme) => ({
@@ -122,8 +122,8 @@ const Login = () => {
     AuthService.login(username, password).then(
       response => {
         dispatch({type: 'success'});
-        history.push("/");
         appDispatch({type: 'setUser', user: response});
+        history.push("/gatherings");
       },
       error => {
         const resMessage =

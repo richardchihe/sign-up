@@ -27,13 +27,21 @@ const appReducer = (state, action) => {
         currentUser: action.user
       };
     }
+    case 'setUserAndOrganization': {
+      return {
+        ...state,
+        currentUser: action.user,
+        organization: action.organization
+      };
+    }
   }
 
   return state;
 }
 
 const initialState = {
-  currentUser: undefined
+  currentUser: undefined,
+  organization: undefined
 }
 
 const App = () => {

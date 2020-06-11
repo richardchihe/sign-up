@@ -11,7 +11,14 @@ class OrganizationService {
         seatingCapacity,
         address,
         contact
-      }, { headers: authHeader() });
+      }, { headers: authHeader() })
+      .then(response => {
+        if (response.data.user.accessToken) {
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+        }
+
+        return response.data;
+      });;
   }
 
   getOrganization(slug) {

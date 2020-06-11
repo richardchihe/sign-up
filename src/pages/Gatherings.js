@@ -1,6 +1,10 @@
-import React, { useEffect } from 'react'; 
+import React, { useEffect, useContext } from 'react'; 
 import GatheringContainer from '../components/containers/GatheringContainer'
 import Grid from '@material-ui/core/Grid';
+
+import FormPrompt from '../components/dialogs/FormPrompt';
+import OrganizationForm from '../components/forms/OrganizationForm';
+import { AppStateContext, AppDispatchContext } from '../contexts/app.context';
 
 const meetings = [
   {
@@ -42,10 +46,11 @@ const meetings = [
 ];
   
 const Gatherings = () => { 
-  useEffect(() => {
-    document.title = "A Web Dev";
+  const { state } = useContext(AppStateContext);
+  const { dispatch } = useContext(AppDispatchContext);
 
-    //Check role then get data
+  useEffect(() => {
+    document.title = "Gatherings";
   }, []);
 
   const handleClick = (data) => {
@@ -54,6 +59,9 @@ const Gatherings = () => {
 
   return (
     <>
+      {(state.currentUser && state.currentUser.organizationId === null) && (
+        <FormPrompt isOpen={true} title="1. Create Organization" form={<OrganizationForm />} />
+      )}
       <Grid container spacing={5} alignItems="flex-end">
         {meetings.map((meeting) => (
           <GatheringContainer key={meeting.title} meeting={meeting} click={(data) => {handleClick(data)}}/>

@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
@@ -9,10 +9,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Alert from '../dialogs/Alert';
 import OrganizationService from "../../services/organization.service";
+import { AppDispatchContext } from '../../contexts/app.context';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -49,7 +49,7 @@ const organizationReducer = (state, action) => {
         [action.field]: action.value,
       };
     }
-    case 'login': {
+    case 'create': {
       return {
         ...state,
         isLoading: true,
@@ -88,6 +88,7 @@ const initialState = {
 const OrganizationForm = () => {
   const classes = useStyles();
   const [state, dispatch] = useReducer(organizationReducer, initialState);
+  const { dispatch: appDispatch } = useContext(AppDispatchContext);
 
   const {
     name,
@@ -109,7 +110,7 @@ const OrganizationForm = () => {
   const handleSubmit = async e =>  {
     e.preventDefault();
 
-    dispatch({type: 'login'});
+    dispatch({type: 'create'});
 
     OrganizationService.createOrganization(
       name,
@@ -118,7 +119,7 @@ const OrganizationForm = () => {
       contact
     ).then(
       response => {
-        console.log(response);
+        appDispatch({type: 'setUserAndOrganization', user: response.user, organization: response.organization});
       },
       error => {
         const resMessage =
@@ -204,7 +205,7 @@ const OrganizationForm = () => {
             disabled={isLoading}
           >
             {
-              !isLoading ? 'Create Organization' :
+              !isLoading ? 'Create' :
                 <CircularProgress className={classes.loading}/> 
             }
           </Button>

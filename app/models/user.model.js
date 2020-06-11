@@ -32,14 +32,15 @@ const User = mongoose.model(
     },
     updatedAt: {
       type: Date,
-      default: Date.now
+      default: null
     },
     deletedAt: {
       type: Date,
-      default: Date.now
+      default: null
     },
     softDeleted: {
-      type: Boolean
+      type: Boolean,
+      default: false
     }
   })
 );

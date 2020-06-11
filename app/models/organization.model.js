@@ -31,10 +31,12 @@ const organizationSchema = new mongoose.Schema({
     default: Date.now
   },
   updatedAt: {
-    type: Date
+    type: Date,
+    default: null
   },
   deletedAt: {
-    type: Date
+    type: Date,
+    default: null
   },
   softDeleted: {
     type: Boolean,
@@ -42,12 +44,19 @@ const organizationSchema = new mongoose.Schema({
   }
 });
 
-organizationSchema.pre('validate', function(next) {
+organizationSchema.pre('validate', async function() {
   if (this.name) {
     this.slug = slugify(this.name, { lower: true, strict: true });
-  }
 
-  next();
+    var duplicate = await Organization.findOne({slug: this.slug});
+    var extender = 1;
+    while (duplicate) {
+      this.slug = slugify(this.name + extender, { lower: true, strict: true });
+      duplicate = await Organization.findOne({slug: this.slug});
+      extender++;
+    }
+  }
 });
 
-module.exports = mongoose.model('Organization', organizationSchema);
+const Organization = mongoose.model('Organization', organizationSchema);
+module.exports = Organization;
