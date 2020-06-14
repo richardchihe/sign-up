@@ -109,9 +109,7 @@ const OrganizationForm = () => {
 
   const handleSubmit = async e =>  {
     e.preventDefault();
-
     dispatch({type: 'create'});
-
     OrganizationService.createOrganization(
       name,
       seatingCapacity,
@@ -128,7 +126,6 @@ const OrganizationForm = () => {
             error.response.data.message) ||
           error.message ||
           error.toString();
-
         dispatch({type: 'error', error: resMessage});
       }
     );

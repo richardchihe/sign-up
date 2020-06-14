@@ -6,7 +6,6 @@ import {
 	Switch 
 } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/styles';
-import Container from '@material-ui/core/Container';
 import theme from './theme';
 import NavBar from './components/navigation/NavBar';
 import Home from './pages/Home';
@@ -34,6 +33,8 @@ const appReducer = (state, action) => {
         organization: action.organization
       };
     }
+    default: 
+      break;
   }
 
   return state;
@@ -41,7 +42,7 @@ const appReducer = (state, action) => {
 
 const initialState = {
   currentUser: undefined,
-  organization: undefined
+  organization: undefined,
 }
 
 const App = () => {
@@ -49,6 +50,10 @@ const App = () => {
   
   useEffect(() => {
     const user = AuthService.getCurrentUser();
+
+    user.isAdmin = user.roles.includes("ROLE_ADMIN");
+    user.isModerator = user.roles.includes("ROLE_MODERATOR");
+    user.isChecker = user.roles.includes("ROLE_CHECKER");
 
     if (user) {
       dispatch({type: 'setUser', user})
@@ -61,16 +66,14 @@ const App = () => {
         <AppDispatchContext.Provider value={{dispatch}}>
           <AppStateContext.Provider value={{state}}>
             <NavBar />
-            <Container style={{marginTop: '2em'}}>
-              <Switch>
-                <Route exact path='/' component={Home}></Route> 
-                <Route exact path='/login' component={Login}></Route> 
-                <Route exact path='/register' component={Register}></Route>
-                <Route exact path='/gatherings/gathering' component={Gathering}></Route>
-                <Route exact path='/gatherings' component={Gatherings}></Route>
-                <Route exact path='/pricing' component={Pricing}></Route> 
-              </Switch> 
-            </Container>
+            <Switch>
+              <Route exact path='/' component={Home}></Route> 
+              <Route exact path='/login' component={Login}></Route> 
+              <Route exact path='/register' component={Register}></Route>
+              <Route exact path='/gatherings/gathering' component={Gathering}></Route>
+              <Route exact path='/gatherings' component={Gatherings}></Route>
+              <Route exact path='/pricing' component={Pricing}></Route> 
+            </Switch> 
           </AppStateContext.Provider>
         </AppDispatchContext.Provider>
       </Router>

@@ -5,6 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom'; 
+import { useHistory } from "react-router";
 
 import { AppStateContext, AppDispatchContext } from '../../contexts/app.context';
 import AuthService from "../../services/auth.service";
@@ -33,12 +34,14 @@ const useStyles = makeStyles((theme) => ({
   
 const NavBar = () => { 
   const classes = useStyles();
+  const history = useHistory();
   const { state } = useContext(AppStateContext);
   const { dispatch } = useContext(AppDispatchContext);
 
   const logout = () => {
     AuthService.logout();
     dispatch({type: 'setUser', user: undefined});
+    history.push("/");
   }
 
   return (

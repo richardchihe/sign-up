@@ -44,8 +44,10 @@ app.use(favicon(__dirname + '/build/Favicon.ico'));
 app.use(express.static(__dirname + '/build'));
 
 require('./app/routes/auth.routes')(app);
-require('./app/routes/organization.routes')(app);
 require('./app/routes/user.routes')(app);
+require('./app/routes/organization.routes')(app);
+require('./app/routes/cycle.routes')(app);
+require('./app/routes/gathering.routes')(app);
 
 app.get('*', (req, res, next) => {
     res.sendFile(__dirname + '/build/index.html')

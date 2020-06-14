@@ -18,20 +18,20 @@ class OrganizationService {
         }
 
         return response.data;
-      });;
+      });
   }
 
   getOrganization(slug) {
     return axios.get(API_URL + slug);
   }
 
-  updateOrganization(id, title, description, markdown) {
+  updateOrganization(name, seatingCapacity, address, contact) {
     return axios
       .put(API_URL + "update", {
-        id,
-        title,
-        description,
-        markdown
+        name,
+        seatingCapacity,
+        address,
+        contact
       }, { headers: authHeader() });
   }
 }

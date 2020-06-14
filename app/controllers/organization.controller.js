@@ -59,13 +59,15 @@ exports.get = async (req, res) => {
 
 exports.update = async (req, res) => {
   let organization = await Organization.findById(req.body.id);
-  article.title = req.body.title;
-  article.description = req.body.description;
-  article.markdown = req.body.markdown;
+  organization.userId = req.userId;
+  organization.name = req.body.name;
+  organization.seatingCapacity = req.body.seatingCapacity;
+  organization.address = req.body.address;
+  organization.contact = req.body.contact;
 
   try {
-    article = await article.save();
-    res.json(article);
+    organization = await organization.save();
+    res.json(organization);
   } catch(e) {
     res.json(e);
   }

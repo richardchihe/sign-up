@@ -9,6 +9,7 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Container from '@material-ui/core/Container';
 
 import AuthService from "../services/auth.service";
 
@@ -154,7 +155,7 @@ const Register = () => {
   }
 
   return (
-    <>
+    <Container>
       <Card className={classes.paper}>
         <CardContent>
           <Avatar className={classes.avatar}>
@@ -234,7 +235,7 @@ const Register = () => {
           </form>
         </CardContent>
       </Card>
-    </>
+    </Container>
   )
 }
 

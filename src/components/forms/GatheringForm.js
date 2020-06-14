@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useReducer, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
@@ -10,6 +10,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Alert from '../dialogs/Alert';
+import GatheringService from "../../services/gathering.service";
+import { GatheringsDispatchContext } from '../../contexts/gatherings.context';
+import { AppStateContext } from '../../contexts/app.context';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -41,29 +44,135 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const GatheringForm = () => {
-  const [ message, setMessage ] = useState('');
+const gatheringReducer = (state, action) => {
+  switch (action.type) {
+    case 'field': {
+      return {
+        ...state,
+        [action.field]: action.value,
+      };
+    }
+    case 'checkbox': {
+      return {
+        ...state,
+        [action.field]: !state[`${action.field}`],
+      };
+    }
+    case 'create': {
+      return {
+        ...state,
+        isLoading: true,
+        error: '',
+      };
+    }
+    case 'success': {
+      return {
+        ...state,
+        isLoading: false,
+        error: '',
+      };
+    }
+    case 'error': {
+      return {
+        ...state,
+        isLoading: false,
+        error: action.error
+      };
+    }
+    default: 
+      break;
+  }
+  return state;
+}
 
-  const today = new Date();
+const today = new Date();
+
+const initialState = {
+  title: '',
+  date: today.toISOString().split('T')[0],
+  from: `${today.getHours()}:${today.getMinutes().toString().length === 1 ? '0'+today.getMinutes() : today.getMinutes()}`,
+  to: `${today.getHours() + 1}:${today.getMinutes().toString().length === 1 ? '0'+today.getMinutes() : today.getMinutes()}`,
+  seatingCapacity: 70, // Calculate from organization Original capacity
+  description: '',
+  requireContact: true,
+  isLoading: false,
+  error: ''
+}
+
+const GatheringForm = (props) => {
+  const [state, dispatch] = useReducer(gatheringReducer, initialState);
+  const { dispatch: gatheringsDispatch } = useContext(GatheringsDispatchContext);
+  const { state: appState } = useContext(AppStateContext);
+
+  const {
+    title,
+    date,
+    from,
+    to,
+    seatingCapacity,
+    description,
+    requireContact,
+    isLoading,
+    error,
+  } = state;
+
+  useEffect(() => {
+    // console.log(props.cycleId);
+  }, []);
 
   const classes = useStyles();
 
   const handleChange = e => {
-  
+    const target = e.currentTarget;
+    if (target.type === 'checkbox') {
+      dispatch({
+        type: 'checkbox',
+        field: target.name
+      });
+    } else {
+      dispatch({
+        type: 'field',
+        field: target.name,
+        value: target.value,
+      });
+    }
   }
 
   const handleSubmit = async e =>  {
     e.preventDefault();
+    dispatch({type: 'create'});
+    GatheringService.createGathering(
+      appState.currentUser.organizationId,
+      props.cycleId,
+      title,
+      date,
+      from,
+      to,
+      seatingCapacity,
+      description,
+      requireContact,
+    ).then(
+      response => {
+        console.log(response);
+        gatheringsDispatch({type: 'fetchData'})
+      },
+      error => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch({type: 'error', error: resMessage});
+      }
+    );
   }
 
   return (
     <Card className={classes.paper}>
       <CardContent>
-        <Typography align="center"  component="h1" variant="h5">
-          Create Gathering
-        </Typography>
-        {message && (
-          <Alert isOpen={true} message={message} close={() => {setMessage('')}} />
+        {error && (
+          <Alert isOpen={true} message={error} close={() => {dispatch({type: 'error', error: ''})}} />
         )}
         <form className={classes.form} 
           onSubmit={handleSubmit}
@@ -71,69 +180,67 @@ const GatheringForm = () => {
           <TextField
             variant="outlined"
             margin="normal"
-            // required
+            required
             fullWidth
             id="title"
-            label="Title"
             name="title"
+            label="Title"
+            value={title}
             autoFocus
-            // value={this.state.username}
             onChange={handleChange}
+            disabled={isLoading}
           />
           <TextField
             variant="outlined"
             margin="normal"
             type="date"
-            // required
+            required
             fullWidth
             id="date"
-            label="Date"
-            defaultValue={today.toISOString().split('T')[0]}
             name="date"
-            // value={this.state.email}
+            label="Date"
+            value={date}
             onChange={handleChange}
+            disabled={isLoading}
           />
           <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
             <TextField
               variant="outlined"
               margin="normal"
               type="time"
-              // required
-              // fullWidth
+              required
+              id="from"
               name="from"
               label="From"
-              defaultValue={`${today.getHours()}:${today.getMinutes()}`}
-              id="from"
-              // value={this.state.password}
+              value={from}
               onChange={handleChange}
+              disabled={isLoading}
             />
             <TextField
               variant="outlined"
               margin="normal"
               type="time"
-              // required
-              // fullWidth
+              required
+              id="to"
               name="to"
               label="To"
-              defaultValue={`${today.getHours() + 1}:${today.getMinutes()}`}
-              id="to"
-              // value={this.state.password}
+              value={to}
               onChange={handleChange}
+              disabled={isLoading}
             />
           </div>
-          
           <TextField
             variant="outlined"
             margin="normal"
             type="number"
-            // required
+            required
             fullWidth
+            id="capacity"
             name="capacity"
             label="Capacity"
-            defaultValue={70}
-            id="capacity"
-            // value={this.state.password}
+            value={seatingCapacity}
             onChange={handleChange}
+            disabled={isLoading}
           />
           <Typography variant="subtitle2" style={{float: 'right'}}>
             Default capacity is recommended
@@ -144,16 +251,26 @@ const GatheringForm = () => {
             multiline
             rows={4}
             rowsMax={4}
-            // required
             fullWidth
             id="description"
             label="Description"
             name="description"
-            // value={this.state.username}
+            value={description}
             onChange={handleChange}
+            disabled={isLoading}
           />
           <FormControlLabel
-            control={<Checkbox value="requireContact" color="primary" />}
+            disabled={isLoading}
+            control={
+              <Checkbox 
+                id="requireContact"
+                name="requireContact"
+                value={requireContact}
+                checked={requireContact}
+                color="primary"
+                onChange={handleChange} 
+              />
+            }
             label="Require Contact"
           />
           <Button
@@ -162,13 +279,12 @@ const GatheringForm = () => {
             variant="contained"
             color="primary"
             className={classes.submit}
-            // disabled={this.state.loading}
+            disabled={isLoading}
           >
-            Create
-            {/* {
-              !this.state.loading ? 'Sign Up' :
+            {
+              !isLoading ? 'Create' :
                 <CircularProgress className={classes.loading}/> 
-            } */}
+            }
           </Button>
         </form>
       </CardContent>

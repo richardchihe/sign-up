@@ -1,27 +1,17 @@
 import React, { useReducer, useContext } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { useHistory } from "react-router";
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { Link } from 'react-router-dom';
-import Container from '@material-ui/core/Container';
 
-import { AppDispatchContext } from '../contexts/app.context';
-import AuthService from "../services/auth.service";
+import Alert from '../dialogs/Alert';
+import CycleService from '../../services/cycle.service';
+import { AppStateContext } from '../../contexts/app.context';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -50,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const loginReducer = (state, action) => {
+const cycleReducer = (state, action) => {
   switch (action.type) {
     case 'field': {
       return {
@@ -58,7 +48,7 @@ const loginReducer = (state, action) => {
         [action.field]: action.value,
       };
     }
-    case 'login': {
+    case 'create': {
       return {
         ...state,
         isLoading: true,
@@ -76,9 +66,7 @@ const loginReducer = (state, action) => {
       return {
         ...state,
         isLoading: false,
-        error: action.error,
-        username: '',
-        password: ''
+        error: action.error
       };
     }
     default: 
@@ -88,21 +76,18 @@ const loginReducer = (state, action) => {
 }
 
 const initialState = {
-  username: '',
-  password: '',
+  title: '',
   isLoading: false,
   error: ''
 }
 
-const Login = () => {
+const CycleForm = (props) => {
   const classes = useStyles();
-  const history = useHistory();
-  const [state, dispatch] = useReducer(loginReducer, initialState);
-  const { dispatch: appDispatch } = useContext(AppDispatchContext);
+  const [state, dispatch] = useReducer(cycleReducer, initialState);
+  const { state: appState } = useContext(AppStateContext);
 
   const {
-    username,
-    password,
+    title,
     isLoading,
     error,
   } = state;
@@ -117,14 +102,13 @@ const Login = () => {
 
   const handleSubmit = async e =>  {
     e.preventDefault();
-
-    dispatch({type: 'login'});
-
-    AuthService.login(username, password).then(
+    dispatch({type: 'create'});
+    CycleService.createCycle(
+      appState.currentUser.organizationId,
+      title
+    ).then(
       response => {
-        dispatch({type: 'success'});
-        appDispatch({type: 'setUser', user: response});
-        history.push("/gatherings");
+        props.success(response);
       },
       error => {
         const resMessage =
@@ -133,27 +117,17 @@ const Login = () => {
             error.response.data.message) ||
           error.message ||
           error.toString();
-
         dispatch({type: 'error', error: resMessage});
       }
     );
   }
 
   return (
-    <Container>
-      <CssBaseline />
+    <>
       <Card className={classes.paper}>
         <CardContent>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography align="center" component="h1" variant="h5">
-            Sign in
-          </Typography>
           {error && (
-            <Typography align="center" color="secondary" variant="subtitle2">
-              {error}
-            </Typography>
+            <Alert isOpen={true} message={error} close={() => {dispatch({type: 'error', error: ''})}} />
           )}
           <form className={classes.form} 
             onSubmit={handleSubmit}
@@ -163,32 +137,13 @@ const Login = () => {
               margin="normal"
               required
               fullWidth
-              id="username"
-              name="username"
-              label="Username"
-              value={username}
-              autoComplete="username"
+              id="title"
+              label="Title"
+              name="title"
+              value={title}
               autoFocus
               onChange={handleChange}
               disabled={isLoading}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="password"
-              name="password"
-              label="Password"
-              value={password}
-              type="password"
-              autoComplete="password"
-              onChange={handleChange}
-              disabled={isLoading}
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
             />
             <Button
               type="submit"
@@ -198,28 +153,17 @@ const Login = () => {
               className={classes.submit}
               disabled={isLoading}
             >
+              
               {
-                !isLoading ? 'Sign In' :
+                !isLoading ? 'Create' :
                   <CircularProgress className={classes.loading}/> 
               }
             </Button>
-            <Grid container>
-              {/* <Grid item xs>
-                <Link to="/" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid> */}
-              <Grid item>
-                <Link to="/register" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
           </form>
         </CardContent>
       </Card>
-    </Container>
+    </>
   )
 }
 
-export default Login;
+export default CycleForm;
