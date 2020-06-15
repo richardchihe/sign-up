@@ -28,6 +28,18 @@ exports.get = async (req, res) => {
   res.json(gathering);
 };
 
+exports.toggleArchiveStatus = async (req, res) => {
+  let gathering = await Gathering.findById(req.body.id);
+  gathering.isArchived = !gathering.isArchived;
+
+  try {
+    gathering = await gathering.save();
+    res.json(gathering);
+  } catch(e) {
+    res.json(e);
+  }
+};
+
 exports.update = async (req, res) => {
   let organization = await Organization.findById(req.body.id);
   organization.userId = req.userId;

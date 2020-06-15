@@ -90,8 +90,8 @@ const today = new Date();
 const initialState = {
   title: '',
   date: today.toISOString().split('T')[0],
-  from: `${today.getHours()}:${today.getMinutes().toString().length === 1 ? '0'+today.getMinutes() : today.getMinutes()}`,
-  to: `${today.getHours() + 1}:${today.getMinutes().toString().length === 1 ? '0'+today.getMinutes() : today.getMinutes()}`,
+  from: `${today.getHours().toString().length === 1 ? '0'+today.getHours() : today.getHours()}:${today.getMinutes().toString().length === 1 ? '0'+today.getMinutes() : today.getMinutes()}`,
+  to: `${today.getHours().toString().length === 1 ? '0'+today.getHours() : today.getHours()}:${today.getMinutes().toString().length === 1 ? '0'+today.getMinutes() : today.getMinutes()}`,
   seatingCapacity: 70, // Calculate from organization Original capacity
   description: '',
   requireContact: true,
@@ -153,8 +153,7 @@ const GatheringForm = (props) => {
       requireContact,
     ).then(
       response => {
-        console.log(response);
-        gatheringsDispatch({type: 'fetchData'})
+        props.success(response);
       },
       error => {
         const resMessage =

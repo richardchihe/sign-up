@@ -41,6 +41,23 @@ class GatheringService {
     return axios.get(API_URL + id);
   }
 
+  toggleOpenStatus(id) {
+    return axios
+      .put(API_URL + "toggleOpenStatus", {
+        id
+      }, { headers: authHeader() });
+  }
+
+  toggleArchiveStatus(id) {
+    return axios
+      .put(API_URL + "toggleArchiveStatus", {
+        id
+      }, { headers: authHeader() })
+      .then(response => {
+        return response.data;
+      });;
+  }
+
   updateGathering(name, seatingCapacity, address, contact) {
     return axios
       .put(API_URL + "update", {

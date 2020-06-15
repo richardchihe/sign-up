@@ -33,19 +33,19 @@ exports.getAll = async (req, res) => {
 
   let cycles = [];
   if (isArchived === null) {
-    cycles = await Cycle.find({userId: req.userId});
+    cycles = await Cycle.find({userId: req.userId}).sort({createdAt: 'desc'});
   } else {
-    cycles = await Cycle.find({userId: req.userId, isArchived});
+    cycles = await Cycle.find({userId: req.userId, isArchived}).sort({createdAt: 'desc'});
   }
   
   let cyclesWithGatherings = [];
   cycles.forEach( async (cycle, index) => {
     let gatherings = [];
-    if (isArchived === null) {
+    // if (isArchived === null) {
       gatherings = await Gathering.find({cycleId: cycle._id});
-    } else {
-      gatherings = await Gathering.find({cycleId: cycle._id, isArchived});
-    } 
+    // } else {
+    //   gatherings = await Gathering.find({cycleId: cycle._id, isArchived});
+    // } 
     cyclesWithGatherings.push({...cycle._doc, gatherings: gatherings});
   });
 

@@ -33,7 +33,10 @@ class CycleService {
     return axios
       .put(API_URL + "toggleArchiveStatus", {
         id
-      }, { headers: authHeader() });
+      }, { headers: authHeader() })
+      .then(response => {
+        return response.data;
+      });;
   }
 
   updateOrganization(title) {

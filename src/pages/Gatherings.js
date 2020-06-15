@@ -1,16 +1,6 @@
 import React, { useEffect, useContext, useReducer } from 'react'; 
-import GatheringContainer from '../components/containers/GatheringContainer'
 import Grid from '@material-ui/core/Grid';
-
-import FormPrompt from '../components/dialogs/FormPrompt';
-import Prompt from '../components/dialogs/Prompt';
-import OrganizationForm from '../components/forms/OrganizationForm';
-import CycleForm from '../components/forms/CycleForm';
-import GatheringForm from '../components/forms/GatheringForm';
-import { AppStateContext } from '../contexts/app.context';
 import Alert from '../components/dialogs/Alert';
-import { GatheringsStateContext, GatheringsDispatchContext } from '../contexts/gatherings.context';
-import CycleService from "../services/cycle.service";
 import { Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
@@ -19,7 +9,18 @@ import NativeSelect from '@material-ui/core/NativeSelect';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+
+import FormPrompt from '../components/dialogs/FormPrompt';
+import Prompt from '../components/dialogs/Prompt';
+import OrganizationForm from '../components/forms/OrganizationForm';
+import CycleForm from '../components/forms/CycleForm';
+import GatheringForm from '../components/forms/GatheringForm';
+import { AppStateContext } from '../contexts/app.context';
+import { GatheringsStateContext, GatheringsDispatchContext } from '../contexts/gatherings.context';
+import CycleService from "../services/cycle.service";
 import BasicPrompt from '../components/dialogs/BasicPrompt';
+import CycleContainer from '../components/containers/CycleContainer';
+import GatheringContainer from '../components/containers/GatheringContainer';
 
 const gatheringsReducer = (state, action) => {
   switch (action.type) {
@@ -41,6 +42,21 @@ const gatheringsReducer = (state, action) => {
         selectedCycle: action.cycle,
         createChoice: 'gathering',
       };
+    }
+    case 'closePrompt': {
+      return {
+        ...state,
+        hasGatheringOrCycle: true
+      };
+    }
+    case 'addGathering': {
+      let gatherings = state.gatherings;
+      gatherings.push(action.gathering);
+      return {
+        ...state,
+        createChoice: '',
+        gatherings: gatherings
+      }
     }
     case 'setCyclesAndGatherings': {
       let notEmpty = false;
@@ -201,6 +217,7 @@ const Gatherings = () => {
             ) && (
             <Prompt 
               isOpen={true}
+              cancel={() => {dispatch({type: 'closePrompt'})}}
               firstChoice={{
                 text: "2.1. Create a cycle",
                 subtitle: "Groups gatherings created in this cycle so that participants can only sign up in one gathering in the cycle.",
@@ -226,18 +243,9 @@ const Gatherings = () => {
           {(createChoice === 'gathering') && (
             <FormPrompt 
               isOpen={true} 
-              title={selectedCycle ? `Create Gathering for ${selectedCycle.title}` : 'Create Gathering'} 
-              form={selectedCycle ? <GatheringForm cycleId={selectedCycle._id} /> : <GatheringForm /> }
+              title={'Create Gathering'} 
+              form={<GatheringForm success={(gathering) => {dispatch({type: 'addGathering', gathering})}} /> }
               cancel={() => {dispatch({type: 'setChoice', createChoice: ''})}}
-            />
-          )}
-          {(prompt === 'archiveCycle') && (
-            <BasicPrompt
-              isOpen={true}
-              title={`Archive cycle ${selectedCycle.title}`}
-              message={"Are you sure? This will also archive all gatherings in this cycle."}
-              cancel={() => dispatch({type: 'setPrompt', prompt: ''})}
-              confirm={() => {handleClick('archiveSelectedCycle')}}
             />
           )}
         </>
@@ -272,67 +280,7 @@ const Gatherings = () => {
         </div>
         
         {cycles.map((cycle) => (
-          <div 
-            key={cycle._id} 
-            style={{
-              padding: "0.5em",
-            }}
-          >
-            <FormGroup row style={{justifyContent: 'space-between'}}>
-              <Typography align="center" variant="h6">{cycle.title}</Typography>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={!cycle.isArchived}
-                    onChange={
-                      () => {
-                        if (cycle.isArchived) {
-                          selectedCycle = cycle;
-                          handleClick('archiveSelectedCycle');
-                        } else {
-                          dispatch({type: 'toggleCycleStatus', cycle});
-                        }
-                      }
-                    }
-                    name="checkedB"
-                    color="primary"
-                  />
-                }
-                label={cycle.isArchived ? "Archived" : "Active"}
-              />
-            </FormGroup>
-            <Typography 
-              component="div" 
-              style={{
-                borderStyle: "solid",
-                borderWidth: "2px",
-                borderRadius: "0.5em",
-                borderColor: cycle.isArchived ? "darkgray" : "mediumseagreen",
-                padding: "0.5em",
-                paddingBottom: "1em",
-                display: "flex",
-                flexDirection: "column"
-              }}
-            >
-              <Button
-                variant="outlined"
-                style={{
-                  marginBottom: '.5em'
-                }}
-                disabled={cycle.isArchived}
-                onClick={() => {dispatch({type: 'setSelectedCycle', cycle: cycle})}}
-              >
-                New Gathering for {cycle.title}
-              </Button>
-              {cycle.gatherings && (
-                <Grid container spacing={2} alignItems="flex-end">
-                  {cycle.gatherings.map((gathering) => (
-                    <GatheringContainer key={gathering._id} gathering={gathering} click={(data) => {handleClick(data)}}/>
-                  ))}
-                </Grid>
-              )}
-            </Typography>
-          </div>
+          <CycleContainer key={cycle._id} cycle={cycle} />
         ))}
         </div>
         <Container style={{marginTop: '1em'}}>

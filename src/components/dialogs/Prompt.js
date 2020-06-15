@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,7 +33,14 @@ const Alert = (props) => {
         aria-describedby="alert-dialog-description"
         style={{width: '-webkit-fill-available'}}
       >
-        <DialogTitle>{props.firstChoice.text}</DialogTitle>
+        <DialogTitle>
+          {props.firstChoice.text}
+          {props.cancel && 
+            <Button style={{float: 'right'}} onClick={props.cancel}>
+              <CancelIcon />
+            </Button>
+          }
+        </DialogTitle>
         <DialogContent>
           <Paper className={classes.paper}>
             <Grid container wrap="nowrap" spacing={2}>

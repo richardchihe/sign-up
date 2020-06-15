@@ -21,6 +21,12 @@ module.exports = function(app) {
   app.get("/api/gathering/:slug", controller.get);
 
   app.put(
+    "/api/gathering/toggleArchiveStatus",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.toggleArchiveStatus
+  );
+
+  app.put(
     "/api/gathering/update",
     [authJwt.verifyToken, authJwt.isModerator],
     controller.update
