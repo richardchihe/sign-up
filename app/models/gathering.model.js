@@ -34,6 +34,10 @@ const gatheringSchema = new mongoose.Schema({
   description: {
     type: [String]
   },
+  requireContact: {
+    type: Boolean,
+    default: true
+  },
   isArchived: {
     type: Boolean,
     default: false

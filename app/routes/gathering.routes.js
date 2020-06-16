@@ -18,7 +18,11 @@ module.exports = function(app) {
     controller.new
   );
 
-  app.get("/api/gathering/:slug", controller.get);
+  app.put(
+    "/api/gathering/toggleOpenStatus",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.toggleOpenStatus
+  );
 
   app.put(
     "/api/gathering/toggleArchiveStatus",
@@ -31,6 +35,8 @@ module.exports = function(app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.update
   );
+
+  app.get("/api/gathering/:slug", controller.get);
 
   // app.delete(
   //   "/api/gathering/delete",

@@ -22,15 +22,18 @@ exports.new = async (req, res) => {
   }
 };
 
-exports.get = async (req, res) => {
-  const gathering = await Gathering.findById(req.body.id);
-  //if null send error
-  res.json(gathering);
-};
 
-exports.toggleArchiveStatus = async (req, res) => {
+exports.update = async (req, res) => {
   let gathering = await Gathering.findById(req.body.id);
-  gathering.isArchived = !gathering.isArchived;
+  console.log(req.body);
+  gathering.title = req.body.title;
+  gathering.date = req.body.date;
+  gathering.from = req.body.from;
+  gathering.to = req.body.to;
+  gathering.seatingCapacity = req.body.seatingCapacity;
+  gathering.description = req.body.description;
+  gathering.requireContact = req.body.requireContact;
+  gathering.updatedAt = new Date();
 
   try {
     gathering = await gathering.save();
@@ -40,17 +43,35 @@ exports.toggleArchiveStatus = async (req, res) => {
   }
 };
 
-exports.update = async (req, res) => {
-  let organization = await Organization.findById(req.body.id);
-  organization.userId = req.userId;
-  organization.name = req.body.name;
-  organization.seatingCapacity = req.body.seatingCapacity;
-  organization.address = req.body.address;
-  organization.contact = req.body.contact;
+exports.get = async (req, res) => {
+  const gathering = await Gathering.findById(req.body.id);
+  //if null send error
+  res.json(gathering);
+};
+
+exports.toggleOpenStatus = async (req, res) => {
+  let gathering = await Gathering.findById(req.body.id);
+  gathering.isOpen = !gathering.isOpen;
 
   try {
-    organization = await organization.save();
-    res.json(organization);
+    gathering = await gathering.save();
+    res.json(gathering);
+  } catch(e) {
+    res.json(e);
+  }
+};
+
+exports.toggleArchiveStatus = async (req, res) => {
+  let gathering = await Gathering.findById(req.body.id);
+  gathering.isArchived = !gathering.isArchived;
+
+  if (gathering.isArchived) {
+    gathering.isOpen = false;
+  }
+
+  try {
+    gathering = await gathering.save();
+    res.json(gathering);
   } catch(e) {
     res.json(e);
   }

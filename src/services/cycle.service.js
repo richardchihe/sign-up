@@ -36,7 +36,7 @@ class CycleService {
       }, { headers: authHeader() })
       .then(response => {
         return response.data;
-      });;
+      });
   }
 
   updateOrganization(title) {

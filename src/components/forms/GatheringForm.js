@@ -8,6 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import moment from 'moment';
 
 import Alert from '../dialogs/Alert';
 import GatheringService from "../../services/gathering.service";
@@ -46,6 +47,20 @@ const useStyles = makeStyles((theme) => ({
 
 const gatheringReducer = (state, action) => {
   switch (action.type) {
+    case 'setInitialState': {
+      return {
+        ...state,
+        mode: 'update',
+        title: action.gathering.title,
+        date: moment(action.gathering.date).format("YYYY-MM-DD"),
+        from: moment(action.gathering.from).format("HH:mm"),
+        to: moment(action.gathering.to).format("HH:mm"),
+        seatingCapacity: action.gathering.seatingCapacity,
+        description: action.gathering.description,
+        requireContact: action.gathering.requireContact,
+      };
+      
+    }
     case 'field': {
       return {
         ...state,
@@ -88,6 +103,7 @@ const gatheringReducer = (state, action) => {
 const today = new Date();
 
 const initialState = {
+  mode: 'create',
   title: '',
   date: today.toISOString().split('T')[0],
   from: `${today.getHours().toString().length === 1 ? '0'+today.getHours() : today.getHours()}:${today.getMinutes().toString().length === 1 ? '0'+today.getMinutes() : today.getMinutes()}`,
@@ -105,6 +121,7 @@ const GatheringForm = (props) => {
   const { state: appState } = useContext(AppStateContext);
 
   const {
+    mode,
     title,
     date,
     from,
@@ -117,7 +134,9 @@ const GatheringForm = (props) => {
   } = state;
 
   useEffect(() => {
-    // console.log(props.cycleId);
+    if (props.gathering) {
+      dispatch({type: 'setInitialState', gathering: props.gathering});
+    }
   }, []);
 
   const classes = useStyles();
@@ -141,30 +160,56 @@ const GatheringForm = (props) => {
   const handleSubmit = async e =>  {
     e.preventDefault();
     dispatch({type: 'create'});
-    GatheringService.createGathering(
-      appState.currentUser.organizationId,
-      props.cycleId,
-      title,
-      date,
-      from,
-      to,
-      seatingCapacity,
-      description,
-      requireContact,
-    ).then(
-      response => {
-        props.success(response);
-      },
-      error => {
-        const resMessage =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        dispatch({type: 'error', error: resMessage});
-      }
-    );
+    if (mode === 'create') {
+      GatheringService.createGathering(
+        appState.currentUser.organizationId,
+        props.cycleId,
+        title,
+        date,
+        from,
+        to,
+        seatingCapacity,
+        description,
+        requireContact,
+      ).then(
+        response => {
+          props.success(response);
+        },
+        error => {
+          const resMessage =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          dispatch({type: 'error', error: resMessage});
+        }
+      );
+    } else {
+      GatheringService.updateGathering(
+        props.gathering._id,
+        title,
+        date,
+        from,
+        to,
+        seatingCapacity,
+        description,
+        requireContact,
+      ).then(
+        response => {
+          props.success(response);
+        },
+        error => {
+          const resMessage =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          dispatch({type: 'error', error: resMessage});
+        }
+      );
+    }
   }
 
   return (
@@ -234,8 +279,8 @@ const GatheringForm = (props) => {
             type="number"
             required
             fullWidth
-            id="capacity"
-            name="capacity"
+            id="seatingCapacity"
+            name="seatingCapacity"
             label="Capacity"
             value={seatingCapacity}
             onChange={handleChange}
@@ -281,8 +326,8 @@ const GatheringForm = (props) => {
             disabled={isLoading}
           >
             {
-              !isLoading ? 'Create' :
-                <CircularProgress className={classes.loading}/> 
+              isLoading ? <CircularProgress className={classes.loading}/>  :
+                mode === 'create' ? 'Create' : 'Update'
             }
           </Button>
         </form>

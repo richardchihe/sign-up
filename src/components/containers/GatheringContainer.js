@@ -8,14 +8,18 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import VisibilityIcon from '@material-ui/icons/Visibility';
+import EditIcon from '@material-ui/icons/Edit';
 import moment from 'moment';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import { Link } from 'react-router-dom'; 
 
 import Alert from '../dialogs/Alert';
 import { AppDispatchContext } from '../../contexts/app.context';
 import GatheringService from "../../services/gathering.service";
 import BasicPrompt from '../dialogs/BasicPrompt';
+import FormPrompt from '../dialogs/FormPrompt';
+import GatheringForm from '../forms/GatheringForm';
 
 const useStyles = makeStyles((theme) => ({
   cardHeader: {
@@ -53,6 +57,12 @@ const containerReducer = (state, action) => {
       return {
         ...state,
         prompt: 'archive'
+      };
+    }
+    case 'closeGathering': {
+      return {
+        ...state,
+        prompt: 'close'
       };
     }
     case 'setPrompt': {
@@ -101,8 +111,26 @@ const GatheringContainer = (props) => {
   const handleClick = (action) => {
     switch (action) {
       case 'toggleArchiveGathering': {
-        console.log("Here");
         GatheringService.toggleArchiveStatus(
+          gathering._id,
+        ).then(
+          response => {
+            dispatch({type: 'setGathering', gathering: response});
+          },
+          error => {
+            const resMessage =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+            dispatch({type: 'error', error: resMessage});
+          }
+        );
+        break;
+      }
+      case 'toggleOpenGathering': {
+        GatheringService.toggleOpenStatus(
           gathering._id,
         ).then(
           response => {
@@ -130,6 +158,15 @@ const GatheringContainer = (props) => {
       {error && (
         <Alert isOpen={true} message={error} close={() => {dispatch({type: 'error', error: ''})}} />
       )}
+      {(prompt === 'close') && (
+        <BasicPrompt
+          isOpen={true}
+          title={`Close gathering ${gathering.title}`}
+          message={"Are you sure?"}
+          cancel={() => dispatch({type: 'setPrompt', prompt: ''})}
+          confirm={() => {handleClick('toggleOpenGathering')}}
+        />
+      )}
       {(prompt === 'archive') && (
         <BasicPrompt
           isOpen={true}
@@ -137,6 +174,14 @@ const GatheringContainer = (props) => {
           message={"Are you sure?"}
           cancel={() => dispatch({type: 'setPrompt', prompt: ''})}
           confirm={() => {handleClick('toggleArchiveGathering')}}
+        />
+      )}
+      {(prompt === 'update') && (
+        <FormPrompt 
+          isOpen={true} 
+          title={`Update ${gathering.title}`} 
+          form={<GatheringForm gathering={gathering} success={(result) => {dispatch({type: 'setGathering', gathering: result})}} /> }
+          cancel={() => {dispatch({type: 'setPrompt', prompt: ''})}}
         />
       )}
       {gathering && (
@@ -151,9 +196,22 @@ const GatheringContainer = (props) => {
               titleTypographyProps={{ align: 'center' }}
               subheaderTypographyProps={{ variant: 'h6', align: 'center' }}
               action={true ? (
-                <Button className={classes.view}>
-                  <VisibilityIcon />
-                </Button>
+                <>
+                  <Button 
+                    disabled={gathering.isArchived || gathering.isOpen}
+                    className={classes.view}
+                    onClick={() => {dispatch({type: 'setPrompt', prompt: 'update'})}}
+                  >
+                    <EditIcon />
+                  </Button>
+                  <a href={`/signup/gathering/${gathering._id}`} target="_blank">
+                    <Button 
+                      className={classes.view}>
+                      <VisibilityIcon />
+                    </Button>
+                  </a>
+                  
+                </>
               ) : null}
               className={classes.cardHeader}
             />
@@ -164,16 +222,17 @@ const GatheringContainer = (props) => {
                 width: '100%'
               }}>
                 <FormControlLabel
+                  disabled={gathering.isArchived}
                   control={
                     <Switch
                       checked={gathering.isOpen}
                       onChange={
                         () => {
-                          // if (gathering.isArchived) {
-                          //   handleClick('toggleArchiveGathering');
-                          // } else {
-                          //   dispatch({type: 'archiveGathering'});
-                          // }
+                          if (gathering.isOpen) {
+                            dispatch({type: 'closeGathering'});
+                          } else {
+                            handleClick('toggleOpenGathering');
+                          }
                         }
                       }
                       name="isArchived"

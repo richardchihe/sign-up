@@ -4,7 +4,7 @@ import authHeader from './auth-header';
 const API_URL = process.env.REACT_APP_MY_API_URL +'/gathering/';
 
 class GatheringService {
-  createGathering(
+  async createGathering(
     organizationId,
     cycleId,
     title,
@@ -20,7 +20,7 @@ class GatheringService {
     date = new Date(date);
     description = description.split(',');
     !cycleId && (cycleId = null); 
-    return axios
+    const response = await axios
       .post(API_URL + "new", {
         organizationId,
         cycleId,
@@ -31,41 +31,47 @@ class GatheringService {
         seatingCapacity,
         description,
         requireContact
-      }, { headers: authHeader() })
-      .then(response => {
-        return response.data;
-      });
+      }, { headers: authHeader() });
+    return response.data;
   }
 
   getGathering(id) {
     return axios.get(API_URL + id);
   }
 
-  toggleOpenStatus(id) {
-    return axios
+  async toggleOpenStatus(id) {
+    const response = await axios
       .put(API_URL + "toggleOpenStatus", {
         id
       }, { headers: authHeader() });
+    return response.data;
   }
 
-  toggleArchiveStatus(id) {
-    return axios
+  async toggleArchiveStatus(id) {
+    const response = await axios
       .put(API_URL + "toggleArchiveStatus", {
         id
-      }, { headers: authHeader() })
-      .then(response => {
-        return response.data;
-      });;
+      }, { headers: authHeader() });
+    return response.data;
   }
 
-  updateGathering(name, seatingCapacity, address, contact) {
-    return axios
+  async updateGathering(id, title, date, from, to, seatingCapacity, description, requireContact) {
+    from = new Date(date + ' ' + from);
+    to = new Date(date + ' ' + to);
+    date = new Date(date);
+    description = description.split(',');
+    const response = await axios
       .put(API_URL + "update", {
-        name,
+        id,
+        title,
+        date,
+        from,
+        to,
         seatingCapacity,
-        address,
-        contact
+        description,
+        requireContact
       }, { headers: authHeader() });
+    return response.data;
   }
 
   deleteGathering(id) {
