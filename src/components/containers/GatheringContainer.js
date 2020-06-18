@@ -53,6 +53,13 @@ const containerReducer = (state, action) => {
         prompt: ''
       };
     }
+    case 'setAttendeesCount': {
+      return {
+        ...state,
+        gathering: {...state.gathering, attendeesCount: action.count},
+        prompt: ''
+      };
+    }
     case 'archiveGathering': {
       return {
         ...state,
@@ -106,6 +113,22 @@ const GatheringContainer = (props) => {
 
   useEffect(() => {
     dispatch({type: 'setGathering', gathering: props.gathering});
+    GatheringService.getAttendeesCount(
+      props.gathering._id
+    ).then(
+      response => {
+        dispatch({type: 'setAttendeesCount', count: response.attendeesCount});
+      },
+      error => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        dispatch({type: 'error', error: resMessage});
+      }
+    );
   }, []);
 
   const handleClick = (action) => {
@@ -210,7 +233,6 @@ const GatheringContainer = (props) => {
                       <VisibilityIcon />
                     </Button>
                   </a>
-                  
                 </>
               ) : null}
               className={classes.cardHeader}
@@ -265,7 +287,7 @@ const GatheringContainer = (props) => {
               <div className={classes.cardPricing}>
                 
                 <Typography component="h2" variant="h3" color="textPrimary">
-                  TBD/{gathering.seatingCapacity}
+                  {gathering.attendeesCount}/{gathering.seatingCapacity}
                 </Typography>
               </div>
               <ul>

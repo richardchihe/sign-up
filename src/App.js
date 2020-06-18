@@ -11,8 +11,9 @@ import NavBar from './components/navigation/NavBar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Gatherings from './pages/Gatherings';
 import Gathering from './pages/Gathering';
+import Gatherings from './pages/Gatherings';
+import GatheringSignUp from './pages/GatheringSignUp';
 import Pricing from './components/Pricing';
 
 import { AppStateContext, AppDispatchContext } from './contexts/app.context';
@@ -70,9 +71,9 @@ const App = () => {
               <Route exact path='/' component={Home}></Route> 
               <Route exact path='/login' component={Login}></Route> 
               <Route exact path='/register' component={Register}></Route>
-              <Route exact path='/gatherings/gathering' component={Gathering}></Route>
               <Route exact path='/gatherings' component={Gatherings}></Route>
-              <Route exact path='/pricing' component={Pricing}></Route> 
+              <Route path='/gatherings/gathering_id' component={Gathering}></Route>
+              <Route path='/signup/gathering/:id' component={GatheringSignUp}></Route>
             </Switch> 
           </AppStateContext.Provider>
         </AppDispatchContext.Provider>

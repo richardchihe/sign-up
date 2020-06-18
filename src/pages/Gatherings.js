@@ -159,7 +159,7 @@ const Gatherings = () => {
       filter,
     ).then(
       response => {
-        console.log(response);
+        // console.log(response);
         dispatch({type: 'setCyclesAndGatherings', cycles: response.cycles, gatherings: response.gatherings});
       },
       error => {
@@ -291,7 +291,7 @@ const Gatherings = () => {
           >
             New Gathering
           </Button>
-          <Grid container spacing={2} alignItems="flex-end">
+          <Grid container spacing={2} alignItems="center">
             {gatherings.map((gathering) => (
               <GatheringContainer key={gathering._id} gathering={gathering} click={(data) => {handleClick(data)}}/>
             ))}

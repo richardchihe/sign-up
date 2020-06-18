@@ -8,6 +8,7 @@ import NativeSelect from '@material-ui/core/NativeSelect';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 
 import Alert from '../dialogs/Alert';
 import FormPrompt from '../dialogs/FormPrompt';
@@ -15,7 +16,7 @@ import GatheringForm from '../forms/GatheringForm';
 import { GatheringsStateContext, GatheringsDispatchContext } from '../../contexts/gatherings.context';
 import CycleService from "../../services/cycle.service";
 import BasicPrompt from '../dialogs/BasicPrompt';
-import GatheringContainer from './GatheringContainer'
+import GatheringContainer from './GatheringContainer';
 
 const cycleReducer = (state, action) => {
   switch (action.type) {
@@ -87,7 +88,6 @@ const CycleContainer = (props) => {
 
   useEffect(() => {
     dispatch({type: 'setCycle', cycle: props.cycle});
-    console.log(props.cycle);
   }, []);
 
   const handleClick = (action) => {
@@ -150,7 +150,14 @@ const CycleContainer = (props) => {
           }}
         >
           <FormGroup row style={{justifyContent: 'space-between'}}>
-            <Typography align="center" variant="h6">{cycle.title}</Typography>
+            <Typography align="center" variant="h6">
+              {cycle.title}
+              <a href={`/signup/cycle/${cycle._id}`} target="_blank">
+                <Button>
+                  <VisibilityIcon />
+                </Button>
+              </a>
+            </Typography>
             <FormControlLabel
               style={{flexDirection: 'row-reverse'}}
               control={

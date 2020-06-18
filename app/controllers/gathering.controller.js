@@ -1,5 +1,6 @@
 const db = require("../models");
 const Gathering = db.gathering;
+const Attendee = db.attendee;
 
 exports.new = async (req, res) => {
   let gathering = new Gathering();
@@ -44,9 +45,18 @@ exports.update = async (req, res) => {
 };
 
 exports.get = async (req, res) => {
-  const gathering = await Gathering.findById(req.body.id);
+  const gathering = await Gathering.findById(req.params.id);
+  const attendeesCount = await Attendee.countDocuments({gatheringId: req.params.id});
+  const result = {...gathering._doc, attendeesCount: attendeesCount};
   //if null send error
-  res.json(gathering);
+  res.json(result);
+};
+
+exports.getAttendeesCount = async (req, res) => {
+  const attendeesCount = await Attendee.countDocuments({gatheringId: req.params.id});
+  const result = {attendeesCount: attendeesCount};
+  //if null send error
+  res.json(result);
 };
 
 exports.toggleOpenStatus = async (req, res) => {

@@ -14,9 +14,9 @@ const Alert = (props) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle>Hey!</DialogTitle>
+        <DialogTitle>{props.title ? props.title : 'Hey!' }</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description" style={{minWidth: '300px'}}>
+          <DialogContentText id="alert-dialog-description">
             {props.message}
           </DialogContentText>
         </DialogContent>

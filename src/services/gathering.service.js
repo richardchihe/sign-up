@@ -35,8 +35,14 @@ class GatheringService {
     return response.data;
   }
 
-  getGathering(id) {
-    return axios.get(API_URL + id);
+  async getGathering(id) {
+    const response = await axios.get(API_URL + id);
+    return response.data;
+  }
+
+  async getAttendeesCount(id) {
+    const response = await axios.get(API_URL + "getAttendeesCount/" + id);
+    return response.data;
   }
 
   async toggleOpenStatus(id) {

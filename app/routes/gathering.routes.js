@@ -36,7 +36,9 @@ module.exports = function(app) {
     controller.update
   );
 
-  app.get("/api/gathering/:slug", controller.get);
+  app.get("/api/gathering/getAttendeesCount/:id", controller.getAttendeesCount);
+
+  app.get("/api/gathering/:id", controller.get);
 
   // app.delete(
   //   "/api/gathering/delete",

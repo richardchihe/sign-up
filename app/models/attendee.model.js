@@ -1,10 +1,7 @@
 const mongoose = require("mongoose");
 
-const gatheringSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-  },
-  organizationId: {
+const attendeeSchema = new mongoose.Schema({
+  gatheringId: {
     type: String,
     required: true
   },
@@ -12,40 +9,29 @@ const gatheringSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
-  title: {
+  name: {
     type: String,
     required: true
   },
-  date: {
-    type: Date,
-    required: true
-  },
-  from: {
-    type: Date,
-    required: true
-  },
-  to: {
-    type: Date,
-    required: true
-  },
-  seatingCapacity: {
+  contact: {
     type: String,
     required: true
   },
-  description: {
-    type: [String]
-  },
-  requireContact: {
-    type: Boolean,
-    default: true
-  },
-  isArchived: {
+  hasAttended: {
     type: Boolean,
     default: false
   },
-  isOpen: {
+  checkedBy: {
+    type: String,
+    default: ''
+  },
+  wasRemoved: {
     type: Boolean,
     default: false
+  },
+  removedBy: {
+    type: String,
+    default: ''
   },
   createdAt: {
     type: Date,
@@ -62,4 +48,4 @@ const gatheringSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Gathering', gatheringSchema);
+module.exports = mongoose.model('Attendee', attendeeSchema);

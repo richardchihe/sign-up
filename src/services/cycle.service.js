@@ -16,7 +16,6 @@ class CycleService {
   }
 
   getCyclesAndGatherings(filter) {
-    console.log(filter);
     var request = {
       headers: authHeader(),
       params : {
