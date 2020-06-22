@@ -56,7 +56,7 @@ const containerReducer = (state, action) => {
     case 'setAttendeesCount': {
       return {
         ...state,
-        gathering: {...state.gathering, attendeesCount: action.count},
+        attendeesCount: action.count,
         prompt: ''
       };
     }
@@ -94,6 +94,7 @@ const containerReducer = (state, action) => {
 
 const initialState = {
   gathering: null,
+  attendeesCount: 0,
   isLoading: false,
   prompt: '',
   error: ''
@@ -106,6 +107,7 @@ const GatheringContainer = (props) => {
 
   let {
     gathering,
+    attendeesCount,
     isLoading,
     prompt,
     error
@@ -113,6 +115,9 @@ const GatheringContainer = (props) => {
 
   useEffect(() => {
     dispatch({type: 'setGathering', gathering: props.gathering});
+  }, []);
+
+  useEffect(() => {
     GatheringService.getAttendeesCount(
       props.gathering._id
     ).then(
@@ -129,7 +134,7 @@ const GatheringContainer = (props) => {
         dispatch({type: 'error', error: resMessage});
       }
     );
-  }, []);
+  }, [gathering]);
 
   const handleClick = (action) => {
     switch (action) {
@@ -287,7 +292,7 @@ const GatheringContainer = (props) => {
               <div className={classes.cardPricing}>
                 
                 <Typography component="h2" variant="h3" color="textPrimary">
-                  {gathering.attendeesCount}/{gathering.seatingCapacity}
+                  {attendeesCount}/{gathering.seatingCapacity}
                 </Typography>
               </div>
               <ul>

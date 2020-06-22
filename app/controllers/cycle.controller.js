@@ -2,6 +2,8 @@ const config = require("../config/auth.config");
 const db = require("../models");
 const Cycle = db.cycle;
 const Gathering = db.gathering;
+const Attendee = db.attendee;
+const async = require("async");
 
 exports.new = async (req, res) => {
   let cycle = new Cycle();
@@ -23,6 +25,27 @@ exports.get = async (req, res) => {
   res.json(cycle);
 };
 
+exports.getActiveGatherings = async (req, res) => {
+  const cycle = await Cycle.findOne({_id: req.params.id, isArchived: false});
+  if (!cycle) {
+    res.status(401).send({ message: "Unauthorized!" });
+    return;
+  }
+
+  const gatherings = await Gathering.find({cycleId: req.params.id, isOpen: true});
+  let gatheringsWithCount = [];
+  
+  async.mapLimit(gatherings, 10, async gathering => {
+    const attendeesCount = await Attendee.countDocuments({gatheringId: gathering._id});
+    gatheringsWithCount.push({...gathering._doc, attendeesCount});
+    return attendeesCount;
+  }, (err, contents) => {
+    if (err) throw err;
+    const result = {...cycle._doc, gatherings: gatheringsWithCount};
+    res.json(result);
+  });
+};
+
 exports.getAll = async (req, res) => {
   let isArchived = null;
   if (req.query.filter === 'active') {
@@ -40,12 +63,7 @@ exports.getAll = async (req, res) => {
   
   let cyclesWithGatherings = [];
   cycles.forEach( async (cycle, index) => {
-    let gatherings = [];
-    // if (isArchived === null) {
-      gatherings = await Gathering.find({cycleId: cycle._id});
-    // } else {
-    //   gatherings = await Gathering.find({cycleId: cycle._id, isArchived});
-    // } 
+    let gatherings = await Gathering.find({cycleId: cycle._id});
     cyclesWithGatherings.push({...cycle._doc, gatherings: gatherings});
   });
 

@@ -27,6 +27,8 @@ module.exports = function(app) {
     controller.toggleArchiveStatus
   );
 
+  app.get("/api/cycle/getActiveGatherings/:id", controller.getActiveGatherings);
+
   app.get("/api/cycle/:slug", controller.get);
 
   app.put(

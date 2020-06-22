@@ -15,6 +15,11 @@ class CycleService {
       });
   }
 
+  async getCycleAndActiveGatherings(id) {
+    const response = await axios.get(API_URL + "getActiveGatherings/" + id);
+    return response.data;
+  }
+
   getCyclesAndGatherings(filter) {
     var request = {
       headers: authHeader(),

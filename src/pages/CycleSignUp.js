@@ -1,17 +1,17 @@
 import React, { useEffect, useReducer } from 'react'; 
 import Container from '@material-ui/core/Container';
-import AttendeesTable from '../components/tables/AttendeesTable';
 import GatheringSignUpContainer from '../components/containers/GatheringSignUpContainer';
-import GatheringService from '../services/gathering.service';
+import CycleService from '../services/cycle.service';
+import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from '../components/dialogs/Alert';
 
 const singUpReducer = (state, action) => {
   switch (action.type) {
-    case 'setGathering': {
+    case 'setCycle': {
       return {
         ...state,
-        gathering: action.gathering,
+        cycle: action.cycle,
         prompt: ''
       };
     }
@@ -30,26 +30,26 @@ const singUpReducer = (state, action) => {
 }
 
 const initialState = {
-  gathering: null,
+  cycle: null,
   isLoading: false,
   error: ''
 }
   
-const GatheringSignUp = (props) => { 
+const CycleSignUp = (props) => { 
   const [state, dispatch] = useReducer(singUpReducer, initialState);
   let {
-    gathering,
+    cycle,
     isLoading,
     error
   } = state;
 
   useEffect(() => {
     document.title = "Sign Up";
-    GatheringService.getGathering(
+    CycleService.getCycleAndActiveGatherings(
       props.match.params.id
     ).then(
       response => {
-        dispatch({type: 'setGathering', gathering: response});
+        dispatch({type: 'setCycle', cycle: response});
       },
       error => {
         const resMessage =
@@ -68,8 +68,16 @@ const GatheringSignUp = (props) => {
       {error && (
         <Alert isOpen={true} message={error} close={() => {dispatch({type: 'error', error: ''})}} />
       )}
-      {gathering ? (
-        <GatheringSignUpContainer gathering={gathering}/>
+      {(cycle && cycle.gatherings) ? (
+        <Grid 
+          style={{alignItems: 'center'}}
+          container 
+          spacing={2} 
+          alignItems="flex-end">
+          {cycle.gatherings.map((gathering) => (
+            <GatheringSignUpContainer key={gathering._id} gathering={gathering}/>
+          ))}
+        </Grid>
       ) : (
         <CircularProgress style={{margin: 'auto'}} />
       )}
@@ -77,4 +85,4 @@ const GatheringSignUp = (props) => {
   )
 }
   
-export default GatheringSignUp;
+export default CycleSignUp;

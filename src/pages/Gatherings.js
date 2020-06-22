@@ -1,6 +1,5 @@
 import React, { useEffect, useContext, useReducer } from 'react'; 
 import Grid from '@material-ui/core/Grid';
-import Alert from '../components/dialogs/Alert';
 import { Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
@@ -10,6 +9,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
+import Alert from '../components/dialogs/Alert';
 import FormPrompt from '../components/dialogs/FormPrompt';
 import Prompt from '../components/dialogs/Prompt';
 import OrganizationForm from '../components/forms/OrganizationForm';

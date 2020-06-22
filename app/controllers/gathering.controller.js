@@ -45,7 +45,10 @@ exports.update = async (req, res) => {
 };
 
 exports.get = async (req, res) => {
-  const gathering = await Gathering.findById(req.params.id);
+  const gathering = await Gathering.findOne({_id: req.params.id, isArchived: false});
+  if (!gathering) {
+    return res.status(401).send({ message: "Unauthorized!" });
+  }
   const attendeesCount = await Attendee.countDocuments({gatheringId: req.params.id});
   const result = {...gathering._doc, attendeesCount: attendeesCount};
   //if null send error

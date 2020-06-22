@@ -65,7 +65,7 @@ const NavBar = () => {
                     Gatherings
                   </Typography>
                 </Link>
-                <Link to="/">
+                <Link to="/checkers">
                   <Typography variant="button" color="textPrimary" className={classes.link}>
                     Checkers
                   </Typography>
