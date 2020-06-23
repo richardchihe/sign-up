@@ -49,9 +49,10 @@ require('./app/routes/organization.routes')(app);
 require('./app/routes/cycle.routes')(app);
 require('./app/routes/gathering.routes')(app);
 require('./app/routes/attendee.routes')(app);
+require('./app/routes/checker.routes')(app);
 
 app.get('*', (req, res, next) => {
-    res.sendFile(__dirname + '/build/index.html')
+  res.sendFile(__dirname + '/build/index.html')
 });
 
 const server = app.listen(port, () => console.log(`Example app listening on port ${port}`));

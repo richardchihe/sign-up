@@ -55,34 +55,38 @@ const Alert = (props) => {
                   style={{height: '100%'}}
                   onClick={props.firstChoice.click}
                 >
-                  {props.secondChoice.buttonText}
+                  {props.firstChoice.buttonText}
                 </Button>
               </Grid>
             </Grid>
           </Paper>
         </DialogContent>
-        <Typography  align="center" variant="subtitle1">OR</Typography>
-        <DialogTitle>{props.secondChoice.text}</DialogTitle>
-        <DialogContent>
-          <Paper className={classes.paper}>
-            <Grid container wrap="nowrap" spacing={2}>
-              <Grid item xs zeroMinWidth>
-                <Typography>{props.secondChoice.subtitle}</Typography>
+        {props.secondChoice && (
+          <>
+          <Typography  align="center" variant="subtitle1">OR</Typography>
+          <DialogTitle>{props.secondChoice.text}</DialogTitle>
+          <DialogContent>
+            <Paper className={classes.paper}>
+              <Grid container wrap="nowrap" spacing={2}>
+                <Grid item xs zeroMinWidth>
+                  <Typography>{props.secondChoice.subtitle}</Typography>
+                </Grid>
+                <Grid item>
+                  <Button 
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    style={{height: '100%'}}
+                    onClick={props.secondChoice.click}
+                  >
+                    {props.secondChoice.buttonText}
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item>
-                <Button 
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  style={{height: '100%'}}
-                  onClick={props.secondChoice.click}
-                >
-                  {props.secondChoice.buttonText}
-                </Button>
-              </Grid>
-            </Grid>
-          </Paper>
-        </DialogContent>
+            </Paper>
+          </DialogContent>
+          </>
+        )}
       </Dialog>
     </div>
   )

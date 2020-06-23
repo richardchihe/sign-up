@@ -60,16 +60,20 @@ const NavBar = () => {
             </Typography>
             {state.currentUser ? (
               <nav>
-                <Link to="/gatherings">
-                  <Typography variant="button" color="textPrimary" className={classes.link}>
-                    Gatherings
-                  </Typography>
-                </Link>
-                <Link to="/checkers">
-                  <Typography variant="button" color="textPrimary" className={classes.link}>
-                    Checkers
-                  </Typography>
-                </Link>
+                {state.currentUser.isModerator && (
+                  <>
+                  <Link to="/gatherings">
+                    <Typography variant="button" color="textPrimary" className={classes.link}>
+                      Gatherings
+                    </Typography>
+                  </Link>
+                  <Link to="/checkers">
+                    <Typography variant="button" color="textPrimary" className={classes.link}>
+                      Checkers
+                    </Typography>
+                  </Link>
+                  </>
+                )}
                 <Button
                   color="primary"
                   variant="outlined"

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useReducer } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
@@ -6,8 +6,17 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormControl from '@material-ui/core/FormControl';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import InputLabel from '@material-ui/core/InputLabel';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import IconButton from '@material-ui/core/IconButton';
 
+import { AppStateContext } from '../../contexts/app.context';
 import Alert from '../dialogs/Alert';
+import CheckerService from '../../services/checker.service';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -39,18 +48,106 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
+const checkerReducer = (state, action) => {
+  switch (action.type) {
+    case 'field': {
+      return {
+        ...state,
+        [action.field]: action.value,
+      };
+    }
+    case 'togglePasswordVisibility': {
+      return {
+        ...state,
+        showPassword: !state.showPassword
+      };
+    }
+    case 'create': {
+      return {
+        ...state,
+        isLoading: true,
+        error: '',
+      };
+    }
+    case 'success': {
+      return {
+        ...state,
+        isLoading: false,
+        error: '',
+      };
+    }
+    case 'error': {
+      return {
+        ...state,
+        isLoading: false,
+        error: action.error
+      };
+    }
+    default: 
+      break;
+  }
+  return state;
+}
 
+const initialState = {
+  username: '',
+  password: '',
+  showPassword: false,
+  isLoading: false,
+  error: ''
+}
 
-const CheckerForm = () => {
-  const [ message, setMessage ] = useState('');
-
+const CheckerForm = (props) => {
   const classes = useStyles();
+  const [state, dispatch] = useReducer(checkerReducer, initialState);
+  const { state: appState } = useContext(AppStateContext);
+
+  const {
+    username,
+    password,
+    showPassword,
+    isLoading,
+    error,
+  } = state;
 
   const handleChange = e => {
+    dispatch({
+      type: 'field',
+      field: e.currentTarget.name,
+      value: e.currentTarget.value,
+    });
   }
 
   const handleSubmit = async e =>  {
     e.preventDefault();
+    dispatch({type: 'create'});
+    console.log("Test");
+    CheckerService.registerChecker(
+      appState.currentUser.organizationId,
+      username,
+      password
+    ).then(
+      response => {
+        console.log(response);
+        props.success();
+      },
+      error => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        console.log(error.response.data);
+        console.log(resMessage);
+        if (resMessage.code) {
+          dispatch({type: 'error', error: `${resMessage.name} ${resMessage.code}`});
+        } else {
+          dispatch({type: 'error', error: resMessage});
+        }
+        
+      }
+    );
   }
 
   return (
@@ -60,8 +157,8 @@ const CheckerForm = () => {
           <Typography align="center" component="h1" variant="h5">
             Create Checker
           </Typography>
-          {message && (
-            <Alert isOpen={true} message={message} close={() => {setMessage('')}} />
+          {error && (
+            <Alert isOpen={true} message={error} close={() => {dispatch({type: 'error', error: ''})}} />
           )}
           <form className={classes.form} 
             onSubmit={handleSubmit}
@@ -74,35 +171,48 @@ const CheckerForm = () => {
               id="username"
               label="Username"
               name="username"
+              value={username}
               autoComplete="username"
               autoFocus
               onChange={handleChange}
+              disabled={isLoading}
             />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="password"
-              onChange={handleChange}
-            />
+            <FormControl fullWidth variant="outlined">
+              <InputLabel htmlFor="password">Password *</InputLabel>
+              <OutlinedInput
+                id="password"
+                required
+                labelWidth={85}
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={password}
+                onChange={handleChange}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => {dispatch({type: 'togglePasswordVisibility'})}}
+                    >
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                disabled={isLoading}
+              />
+            </FormControl>
             <Button
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
-              // disabled={this.state.loading}
+              disabled={isLoading}
             >
-              Create
-              {/* {
-                !this.state.loading ? 'Sign In' :
+              
+              {
+                !isLoading ? 'Create' :
                   <CircularProgress className={classes.loading}/> 
-              } */}
+              }
             </Button>
           </form>
         </CardContent>
