@@ -9,7 +9,6 @@ class CheckerService {
     username,
     password
   ) {
-    console.log("Test2");
     const response = await axios
       .post(API_URL + "new", {
         organizationId,
@@ -18,6 +17,21 @@ class CheckerService {
         roles: ['user', 'checker']
       }, { headers: authHeader() });
     return response.data;
+  }
+
+  async getCheckers (
+    organizationId
+  ) {
+    var request = {
+      headers: authHeader(),
+      params : {
+        organizationId
+      }
+    };
+
+    return axios.get(API_URL + "getCheckers/", request).then(response => {
+      return response.data;
+    });
   }
 }
 

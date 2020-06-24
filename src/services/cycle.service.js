@@ -30,7 +30,7 @@ class CycleService {
 
     return axios.get(API_URL + "cAndG", request).then(response => {
       return response.data;
-    });;
+    });
   }
 
   toggleArchiveStatus(id) {

@@ -3,11 +3,10 @@ const db = require("../models");
 const User = db.user;
 const Role = db.role;
 
-var jwt = require("jsonwebtoken");
 var bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 
 exports.new = (req, res) => {
-  console.log(req.body);
   const user = new User({
     username: req.body.username,
     email: req.body.username,
@@ -17,7 +16,6 @@ exports.new = (req, res) => {
 
   user.save((err, user) => {
     if (err) {
-      console.log(err);
       res.status(500).send({ message: err });
       return;
     }
@@ -63,4 +61,14 @@ exports.new = (req, res) => {
       });
     }
   });
+};
+
+exports.getCheckers = async (req, res) => {
+  const role = await Role.findOne({name: 'checker'});
+  const checkers = await User.find({
+    organizationId: req.query.organizationId,
+    roles: mongoose.Types.ObjectId(role._id)
+  });
+
+  res.json(checkers);
 };

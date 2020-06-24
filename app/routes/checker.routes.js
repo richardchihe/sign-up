@@ -10,6 +10,12 @@ module.exports = function(app) {
     next();
   });
 
+  app.get(
+    "/api/checker/getCheckers",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.getCheckers
+  );
+
   app.post(
     "/api/checker/new",
     [authJwt.verifyToken, authJwt.isModerator],

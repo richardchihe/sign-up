@@ -30,8 +30,9 @@ const rows = [
   createData('Gingerbread', 356, 16.0, 49, 3.9),
 ];
 
-const CheckersTable = () => {
+const CheckersTable = (props) => {
   const classes = useStyles();
+  const checkers = props.checkers;
 
   return (
     <TableContainer component={Paper}>
@@ -43,10 +44,10 @@ const CheckersTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.name}>
+          {checkers && checkers.map((checker) => (
+            <TableRow key={checker._id}>
               <TableCell component="th" scope="row">
-                {row.name}
+                {checker.username}
               </TableCell>
               <TableCell align="right">
                 <Button

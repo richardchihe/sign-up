@@ -8,6 +8,8 @@ import Alert from '../components/dialogs/Alert';
 import Prompt from '../components/dialogs/Prompt';
 import FormPrompt from '../components/dialogs/FormPrompt';
 import CheckerForm from '../components/forms/CheckerForm';
+import CheckerService from '../services/checker.service';
+import CheckersTable from '../components/tables/CheckersTable';
 
 const gatheringsReducer = (state, action) => {
   switch (action.type) {
@@ -26,10 +28,15 @@ const gatheringsReducer = (state, action) => {
         gatherings: gatherings
       }
     }
+    case 'setCheckers': {
+      return {
+        ...state,
+        checkers: action.checkers,
+      };
+    }
     case 'fetchData': {
       return {
         ...state,
-        selectedCycle: action.cycle,
         fetchedAt: new Date(),
         createChoice: '',
         prompt: ''
@@ -83,7 +90,31 @@ const Checkers = () => {
   } = state;
 
   useEffect(() => {
-    document.title = "Checkers"
+    if (appState.currentUser) {
+      console.log("Test");
+      CheckerService.getCheckers(
+        appState.currentUser.organizationId
+      ).then(
+        response => {
+          console.log(response);
+          dispatch({type: 'setCheckers', checkers: response});
+        },
+        error => {
+          const resMessage =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString();
+          dispatch({type: 'error', error: resMessage});
+        }
+      );
+    }
+  }, [fetchedAt]);
+
+  useEffect(() => {
+    document.title = "Checkers";
+    dispatch({type: 'fetchData'});
   }, []);
 
   return (
@@ -119,18 +150,16 @@ const Checkers = () => {
           )}
         </>
         <div style={{maxWidth: '1400px', margin: 'auto'}}>
-          <div>
-            <Button
-              variant="outlined"
-              style={{
-                margin: '1em',
-                marginBottom: '0px'
-              }}
-              onClick={() => {dispatch({type: 'setChoice', createChoice: 'checker'})}}
-            >
-              New Checker
-            </Button>
-          </div>
+          <Button
+            variant="outlined"
+            style={{
+              margin: '1em'
+            }}
+            onClick={() => {dispatch({type: 'setChoice', createChoice: 'checker'})}}
+          >
+            New Checker
+          </Button>
+          <CheckersTable checkers={checkers} />
         </div>
       </CheckersDispatchContext.Provider>
     </CheckersStateContext.Provider>

@@ -23,6 +23,7 @@ import AuthService from "./services/auth.service";
 const appReducer = (state, action) => {
   switch (action.type) {
     case 'setUser': {
+      console.log("User set");
       return {
         ...state,
         currentUser: action.user
