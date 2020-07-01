@@ -135,7 +135,6 @@ const initialState = {
 const Gatherings = () => { 
   const [state, dispatch] = useReducer(gatheringsReducer, initialState);
   const { state: appState } = useContext(AppStateContext);
-  // const { dispatch } = useContext(AppDispatchContext);
 
   let {
     cycles,

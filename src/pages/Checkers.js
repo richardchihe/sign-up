@@ -11,7 +11,7 @@ import CheckerForm from '../components/forms/CheckerForm';
 import CheckerService from '../services/checker.service';
 import CheckersTable from '../components/tables/CheckersTable';
 
-const gatheringsReducer = (state, action) => {
+const checkersReducer = (state, action) => {
   switch (action.type) {
     case 'setChoice': {
       return {
@@ -77,7 +77,7 @@ const initialState = {
 }
   
 const Checkers = () => { 
-  const [state, dispatch] = useReducer(gatheringsReducer, initialState);
+  const [state, dispatch] = useReducer(checkersReducer, initialState);
   const { state: appState } = useContext(AppStateContext);
 
   let {
@@ -118,8 +118,8 @@ const Checkers = () => {
   }, []);
 
   return (
-    <CheckersStateContext.Provider value={{dispatch}}>
-      <CheckersDispatchContext.Provider value={{state}}>
+    <CheckersDispatchContext.Provider value={{dispatch}}>
+      <CheckersStateContext.Provider value={{state}}>
         <>
           {error && (
             <Alert isOpen={true} message={error} close={() => {dispatch({type: 'error', error: ''})}} />
@@ -161,8 +161,8 @@ const Checkers = () => {
           </Button>
           <CheckersTable checkers={checkers} />
         </div>
-      </CheckersDispatchContext.Provider>
-    </CheckersStateContext.Provider>
+      </CheckersStateContext.Provider>
+    </CheckersDispatchContext.Provider>
   )
 }
   

@@ -72,3 +72,35 @@ exports.getCheckers = async (req, res) => {
 
   res.json(checkers);
 };
+
+exports.toggleDeletedStatus = async (req, res) => {
+  let user = await User.findById(req.body.id);
+  user.softDeleted = !user.softDeleted;
+
+  if (user.softDeleted) {
+    user.deletedAt = new Date();
+  }
+
+  user.updatedAt = new Date();
+
+  try {
+    user = await user.save();
+    res.json(user);
+  } catch(e) {
+    res.json(e);
+  }
+};
+
+exports.setPassword = async (req, res) => {
+  let user = await User.findById(req.body.id);
+  user.password = bcrypt.hashSync(req.body.password, 8)
+
+  user.updatedAt = new Date();
+
+  try {
+    user = await user.save();
+    res.json(user);
+  } catch(e) {
+    res.json(e);
+  }
+};

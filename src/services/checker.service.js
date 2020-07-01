@@ -33,6 +33,23 @@ class CheckerService {
       return response.data;
     });
   }
+
+  async toggleDeletedStatus(id) {
+    const response = await axios
+      .put(API_URL + "toggleDeletedStatus", {
+        id
+      }, { headers: authHeader() });
+    return response.data;
+  }
+
+  async setPassword(id, password) {
+    const response = await axios
+      .put(API_URL + "setPassword", {
+        id,
+        password
+      }, { headers: authHeader() });
+    return response.data;
+  }
 }
 
 export default new CheckerService();

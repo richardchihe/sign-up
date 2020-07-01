@@ -21,4 +21,16 @@ module.exports = function(app) {
     [authJwt.verifyToken, authJwt.isModerator],
     controller.new
   );
+
+  app.put(
+    "/api/checker/toggleDeletedStatus",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.toggleDeletedStatus
+  );
+
+  app.put(
+    "/api/checker/setPassword",
+    [authJwt.verifyToken, authJwt.isModerator],
+    controller.setPassword
+  );
 };

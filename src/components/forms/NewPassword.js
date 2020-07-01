@@ -90,20 +90,18 @@ const checkerReducer = (state, action) => {
 }
 
 const initialState = {
-  username: '',
   password: '',
   showPassword: false,
   isLoading: false,
   error: ''
 }
 
-const CheckerForm = (props) => {
+const NewPassword = (props) => {
   const classes = useStyles();
   const [state, dispatch] = useReducer(checkerReducer, initialState);
   const { state: appState } = useContext(AppStateContext);
 
   const {
-    username,
     password,
     showPassword,
     isLoading,
@@ -121,10 +119,9 @@ const CheckerForm = (props) => {
   const handleSubmit = async e =>  {
     e.preventDefault();
     dispatch({type: 'create'});
-    console.log("Test");
-    CheckerService.registerChecker(
-      appState.currentUser.organizationId,
-      username,
+    console.log(props.id);
+    CheckerService.setPassword(
+      props.id,
       password
     ).then(
       response => {
@@ -154,29 +151,12 @@ const CheckerForm = (props) => {
     <>
       <Card className={classes.paper}>
         <CardContent>
-          <Typography align="center" component="h1" variant="h5">
-            Create Checker
-          </Typography>
           {error && (
             <Alert isOpen={true} message={error} close={() => {dispatch({type: 'error', error: ''})}} />
           )}
           <form className={classes.form} 
             onSubmit={handleSubmit}
           >
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              value={username}
-              autoComplete="username"
-              autoFocus
-              onChange={handleChange}
-              disabled={isLoading}
-            />
             <FormControl fullWidth variant="outlined">
               <InputLabel htmlFor="password">Password *</InputLabel>
               <OutlinedInput
@@ -211,7 +191,7 @@ const CheckerForm = (props) => {
             >
               
               {
-                !isLoading ? 'Create' :
+                !isLoading ? 'Set Password' :
                   <CircularProgress className={classes.loading}/> 
               }
             </Button>
@@ -222,4 +202,4 @@ const CheckerForm = (props) => {
   )
 }
 
-export default CheckerForm;
+export default NewPassword;
