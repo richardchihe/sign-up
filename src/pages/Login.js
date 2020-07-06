@@ -124,7 +124,12 @@ const Login = () => {
       response => {
         dispatch({type: 'success'});
         appDispatch({type: 'setUser', user: response});
-        history.push("/gatherings");
+        if (response.roles.includes("ROLE_MODERATOR")) {
+          history.push("/gatherings");
+        }
+        if (response.roles.includes("ROLE_CHECKER")) {
+          history.push("/activeGatherings");
+        }
       },
       error => {
         const resMessage =

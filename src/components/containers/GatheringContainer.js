@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 
 import Alert from '../dialogs/Alert';
 import { AppDispatchContext } from '../../contexts/app.context';
+import { GatheringsDispatchContext } from '../../contexts/gatherings.context';
 import GatheringService from "../../services/gathering.service";
 import BasicPrompt from '../dialogs/BasicPrompt';
 import FormPrompt from '../dialogs/FormPrompt';
@@ -103,7 +104,7 @@ const initialState = {
 const GatheringContainer = (props) => { 
   const classes = useStyles();
   const [state, dispatch] = useReducer(containerReducer, initialState);
-  const { dispatch: appDispatch } = useContext(AppDispatchContext);
+  const { dispatch: gatheringsDispatch } = useContext(GatheringsDispatchContext);
 
   let {
     gathering,
@@ -307,18 +308,16 @@ const GatheringContainer = (props) => {
                 ))}
               </ul>
             </CardContent>
-            {/* <CardActions>
-              {!state.currentUser && (
-                <Button fullWidth variant="outlined" color="primary" onClick={() => {props.click(gathering.title)}}>
-                  Sign Up
-                </Button>
-              )}
-              {state.currentUser.isModerator && (
-                <Button fullWidth variant="outlined" color="primary" onClick={() => {props.click(gathering.title)}}>
-                  Actions
-                </Button>
-              )}
-            </CardActions> */}
+            <CardActions>
+              <Button
+                fullWidth
+                variant="outlined"
+                color="primary"
+                onClick={() => {gatheringsDispatch({type: 'setSelectedGathering', gathering})}}
+              >
+                Attendees
+              </Button>
+            </CardActions>
           </Card>
         </Grid>
       )}

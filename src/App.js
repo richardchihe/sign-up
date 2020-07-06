@@ -13,6 +13,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Gathering from './pages/Gathering';
 import Gatherings from './pages/Gatherings';
+import ActiveGatherings from './pages/ActiveGatherings';
 import GatheringSignUp from './pages/GatheringSignUp';
 import CycleSignUp from './pages/CycleSignUp';
 import Checkers from './pages/Checkers';
@@ -54,6 +55,8 @@ const App = () => {
   useEffect(() => {
     const user = AuthService.getCurrentUser();
 
+    console.log(user);
+
     if (user) {
       user.isAdmin = user.roles.includes("ROLE_ADMIN");
       user.isModerator = user.roles.includes("ROLE_MODERATOR");
@@ -73,6 +76,7 @@ const App = () => {
               <Route exact path='/login' component={Login}></Route> 
               <Route exact path='/register' component={Register}></Route>
               <Route exact path='/gatherings' component={Gatherings}></Route>
+              <Route exact path='/activeGatherings' component={ActiveGatherings}></Route>
               <Route exact path='/checkers' component={Checkers}></Route>
               <Route path='/gatherings/gathering_id' component={Gathering}></Route>
               <Route path='/signup/gathering/:id' component={GatheringSignUp}></Route>

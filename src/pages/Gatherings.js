@@ -8,6 +8,8 @@ import NativeSelect from '@material-ui/core/NativeSelect';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import moment from 'moment';
 
 import Alert from '../components/dialogs/Alert';
 import FormPrompt from '../components/dialogs/FormPrompt';
@@ -21,6 +23,7 @@ import CycleService from "../services/cycle.service";
 import BasicPrompt from '../components/dialogs/BasicPrompt';
 import CycleContainer from '../components/containers/CycleContainer';
 import GatheringContainer from '../components/containers/GatheringContainer';
+import AttendeesTable from '../components/tables/AttendeesTable';
 
 const gatheringsReducer = (state, action) => {
   switch (action.type) {
@@ -41,6 +44,12 @@ const gatheringsReducer = (state, action) => {
         ...state,
         selectedCycle: action.cycle,
         createChoice: 'gathering',
+      };
+    }
+    case 'setSelectedGathering': {
+      return {
+        ...state,
+        selectedGathering: action.gathering
       };
     }
     case 'closePrompt': {
@@ -125,6 +134,7 @@ const initialState = {
   hasGatheringOrCycle: false,
   createChoice: '',
   selectedCycle: null,
+  selectedGathering: null,
   isLoading: false,
   prompt: '',
   error: '',
@@ -142,6 +152,7 @@ const Gatherings = () => {
     hasGatheringOrCycle,
     createChoice,
     selectedCycle,
+    selectedGathering,
     isLoading,
     prompt,
     error,
@@ -248,54 +259,73 @@ const Gatherings = () => {
             />
           )}
         </>
-        <div style={{maxWidth: '1400px', margin: 'auto'}}>
-        <div>
-          <Button
-            variant="outlined"
-            style={{
-              margin: '1em',
-              marginBottom: '0px'
-            }}
-            onClick={() => {dispatch({type: 'setChoice', createChoice: 'cycle'})}}
-          >
-            New Cycle
-          </Button>
-          <FormControl
-            style={{float: 'right', margin: '0.5em'}}
-          >
-            <NativeSelect
-              value={filter}
-              onChange={(e) => {
-                dispatch({type: 'setFilter', filter: e.currentTarget.value})
-              }}
-              name="isArchived"
-              inputProps={{ 'aria-label': 'isArchived' }}
-            >
-              <option value="all">All</option>
-              <option value="active">Non Archived</option>
-              <option value="archived">Archived</option>
-            </NativeSelect>
-          </FormControl>
-        </div>
         
-        {cycles.map((cycle) => (
-          <CycleContainer key={cycle._id} cycle={cycle} />
-        ))}
-        </div>
-        <Container style={{marginTop: '1em'}}>
-          <Button
-            style={{float: 'right'}}
-            variant="outlined"
-            onClick={() => {dispatch({type: 'setSelectedCycle', cycle: null})}}
-          >
-            New Gathering
-          </Button>
-          <Grid container spacing={2} alignItems="center">
-            {gatherings.map((gathering) => (
-              <GatheringContainer key={gathering._id} gathering={gathering} click={(data) => {handleClick(data)}}/>
+        {selectedGathering ? (
+          <Container style={{marginTop: '1em'}}>
+            <Button variant="outlined" color="primary" onClick={() => {dispatch({type: 'setSelectedGathering', gathering: null})}}>
+              <ArrowBackIcon />
+            </Button>
+            <Typography align="center" component="h2" variant="h3" color="textPrimary">
+              {selectedGathering.title}
+            </Typography>
+            <ul>
+              <Typography component="li" variant="subtitle1" align="center">
+                {`${moment(selectedGathering.from).format("hh:mm A")} - ${moment(selectedGathering.to).format("hh:mm A")}`}
+              </Typography>
+            </ul>
+            <AttendeesTable gathering={selectedGathering} />
+          </Container>
+        ) : (
+          <>
+            <div style={{maxWidth: '1400px', margin: 'auto'}}>
+              <div>
+                <Button
+                  variant="outlined"
+                  style={{
+                    margin: '1em',
+                    marginBottom: '0px'
+                  }}
+                  onClick={() => {dispatch({type: 'setChoice', createChoice: 'cycle'})}}
+                >
+                  New Cycle
+                </Button>
+                <FormControl
+                  style={{float: 'right', margin: '0.5em'}}
+                >
+                  <NativeSelect
+                    value={filter}
+                    onChange={(e) => {
+                      dispatch({type: 'setFilter', filter: e.currentTarget.value})
+                    }}
+                    name="isArchived"
+                    inputProps={{ 'aria-label': 'isArchived' }}
+                  >
+                    <option value="all">All</option>
+                    <option value="active">Non Archived</option>
+                    <option value="archived">Archived</option>
+                  </NativeSelect>
+                </FormControl>
+              </div>
+            {cycles.map((cycle) => (
+              <CycleContainer key={cycle._id} cycle={cycle} />
             ))}
-          </Grid>
-        </Container>
+            </div>
+            <Container style={{marginTop: '1em'}}>
+            <Button
+              style={{float: 'right'}}
+              variant="outlined"
+              onClick={() => {dispatch({type: 'setSelectedCycle', cycle: null})}}
+            >
+              New Gathering
+            </Button>
+            <Grid container spacing={2} alignItems="center">
+              {gatherings.map((gathering) => (
+                <GatheringContainer key={gathering._id} gathering={gathering} click={(data) => {handleClick(data)}}/>
+              ))}
+            </Grid>
+          </Container>
+          </>
+        )}
       </GatheringsStateContext.Provider>
     </GatheringsDispatchContext.Provider>
   )

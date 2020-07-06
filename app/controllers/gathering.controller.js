@@ -1,6 +1,7 @@
 const db = require("../models");
 const Gathering = db.gathering;
 const Attendee = db.attendee;
+const async = require("async");
 
 exports.new = async (req, res) => {
   let gathering = new Gathering();
@@ -22,7 +23,6 @@ exports.new = async (req, res) => {
     res.json(e);
   }
 };
-
 
 exports.update = async (req, res) => {
   let gathering = await Gathering.findById(req.body.id);
@@ -53,6 +53,22 @@ exports.get = async (req, res) => {
   const result = {...gathering._doc, attendeesCount: attendeesCount};
   //if null send error
   res.json(result);
+};
+
+exports.getActiveGatherings = async (req, res) => {
+  const gatherings = await Gathering.find({organizationId: req.params.organizationId, isArchived: false});
+
+  let gatheringsWithCount = [];
+  
+  async.mapLimit(gatherings, 10, async gathering => {
+    const attendeesCount = await Attendee.countDocuments({gatheringId: gathering._id});
+    gatheringsWithCount.push({...gathering._doc, attendeesCount});
+    return attendeesCount;
+  }, (err, contents) => {
+    if (err) throw err;
+    const result = {gatherings: gatheringsWithCount};
+    res.json(result);
+  });
 };
 
 exports.getAttendeesCount = async (req, res) => {

@@ -16,6 +16,21 @@ class AttendeeService {
         return response.data;
       });
   }
+
+  async getAttendees(gatheringId) {
+    const response = await axios.get(API_URL + "attendees/" + gatheringId);
+    return response.data;
+  }
+
+  async toggleAttendedStatus(id, hasAttended, checker) {
+    const response = await axios
+      .put(API_URL + "toggleAttendedStatus", {
+        id,
+        hasAttended,
+        checker
+      }, { headers: authHeader() });
+    return response.data;
+  }
 }
 
 export default new AttendeeService();

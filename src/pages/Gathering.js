@@ -1,15 +1,13 @@
 import React, { useEffect } from 'react'; 
-import AttendeesTable from '../components/tables/AttendeesTable'
   
 const Gathering = () => { 
   useEffect(() => {
-    document.title = "A Web Dev"
+    document.title = "Gatherings"
   }, []);
 
   return (
     <>
-      Gathering Details
-      <AttendeesTable />
+      A Gatherings Sign Up App
     </>
   )
 }

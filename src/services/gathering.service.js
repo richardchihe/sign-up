@@ -40,6 +40,11 @@ class GatheringService {
     return response.data;
   }
 
+  async getActiveGatherings(organizationId) {
+    const response = await axios.get(API_URL + "activeGatherings/" + organizationId);
+    return response.data;
+  }
+
   async getAttendeesCount(id) {
     const response = await axios.get(API_URL + "getAttendeesCount/" + id);
     return response.data;

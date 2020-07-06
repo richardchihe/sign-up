@@ -40,6 +40,11 @@ module.exports = function(app) {
 
   app.get("/api/gathering/:id", controller.get);
 
+  app.get(
+    "/api/gathering/activeGatherings/:organizationId",
+    controller.getActiveGatherings
+  );
+
   // app.delete(
   //   "/api/gathering/delete",
   //   [authJwt.verifyToken, authJwt.isAdmin],

@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react'; 
-import OrganizationForm from '../components/forms/OrganizationForm'
+import Typography from '@material-ui/core/Typography';
   
 const Home = () => { 
   useEffect(() => {
-    document.title = "A Web Dev"
+    document.title = "Gatherings"
   }, []);
 
   return (
     <>
-      <OrganizationForm />
+      <Typography variant="h1" align="center" >
+        A Gatherings Sign Up App
+      </Typography>
     </>
   )
 }

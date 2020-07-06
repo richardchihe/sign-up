@@ -10,16 +10,13 @@ module.exports = function(app) {
     next();
   });
 
-  app.post(
-    "/api/cycle/new",
-    [authJwt.verifyToken, authJwt.isModerator],
-    controller.new
-  );
-
-  app.get("/api/cycle/cAndG", 
-    [authJwt.verifyToken, authJwt.isModerator],
-    controller.getAll
-  );
-
   app.post("/api/attendee/signUp", controller.signUp);
+
+  app.get("/api/attendee/attendees/:gatheringId", controller.getAttendees);
+
+  app.put(
+    "/api/attendee/toggleAttendedStatus",
+    [authJwt.verifyToken],
+    controller.toggleAttendedStatus
+  );
 };
