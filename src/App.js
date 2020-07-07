@@ -19,12 +19,12 @@ import CycleSignUp from './pages/CycleSignUp';
 import Checkers from './pages/Checkers';
 
 import { AppStateContext, AppDispatchContext } from './contexts/app.context';
-import AuthService from "./services/auth.service";
+import AuthService from './services/auth.service';
+import OrganizationService from './services/organization.service';
 
 const appReducer = (state, action) => {
   switch (action.type) {
     case 'setUser': {
-      console.log("User set");
       return {
         ...state,
         currentUser: action.user
@@ -37,6 +37,12 @@ const appReducer = (state, action) => {
         organization: action.organization
       };
     }
+    case 'fetchData': {
+      return {
+        ...state,
+        fetchedAt: new Date()
+      };
+    }
     default: 
       break;
   }
@@ -47,23 +53,43 @@ const appReducer = (state, action) => {
 const initialState = {
   currentUser: undefined,
   organization: undefined,
+  fetchedAt: new Date()
 }
 
 const App = () => {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  let { fetchedAt } = state;
   
   useEffect(() => {
     const user = AuthService.getCurrentUser();
-
-    console.log(user);
 
     if (user) {
       user.isAdmin = user.roles.includes("ROLE_ADMIN");
       user.isModerator = user.roles.includes("ROLE_MODERATOR");
       user.isChecker = user.roles.includes("ROLE_CHECKER");
-      dispatch({type: 'setUser', user})
+
+      if (user.organizationId) {
+        OrganizationService.getOrganizationById(
+          user.organizationId
+        ).then(
+          response => {
+            dispatch({type: 'setUserAndOrganization', user, organization: response});
+          },
+          error => {
+            const resMessage =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+            dispatch({type: 'error', error: resMessage});
+          }
+        );
+      } else {
+        dispatch({type: 'setUser', user});
+      }
     }
-  }, []);
+  }, [fetchedAt]);
 
   return (
     <ThemeProvider theme={theme}>

@@ -26,7 +26,6 @@ exports.new = async (req, res) => {
 
 exports.update = async (req, res) => {
   let gathering = await Gathering.findById(req.body.id);
-  console.log(req.body);
   gathering.title = req.body.title;
   gathering.date = req.body.date;
   gathering.from = req.body.from;

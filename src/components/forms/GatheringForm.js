@@ -5,14 +5,13 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from 'moment';
 
 import Alert from '../dialogs/Alert';
 import GatheringService from "../../services/gathering.service";
-import { GatheringsDispatchContext } from '../../contexts/gatherings.context';
 import { AppStateContext } from '../../contexts/app.context';
 
 const useStyles = makeStyles((theme) => ({
@@ -61,6 +60,12 @@ const gatheringReducer = (state, action) => {
       };
       
     }
+    case 'setSeatingCapacity': {
+      return {
+        ...state,
+        seatingCapacity: action.seatingCapacity,
+      };
+    }
     case 'field': {
       return {
         ...state,
@@ -108,7 +113,7 @@ const initialState = {
   date: today.toISOString().split('T')[0],
   from: `${today.getHours().toString().length === 1 ? '0'+today.getHours() : today.getHours()}:${today.getMinutes().toString().length === 1 ? '0'+today.getMinutes() : today.getMinutes()}`,
   to: `${today.getHours().toString().length === 1 ? '0'+today.getHours() : today.getHours()}:${today.getMinutes().toString().length === 1 ? '0'+today.getMinutes() : today.getMinutes()}`,
-  seatingCapacity: 70, // Calculate from organization Original capacity
+  seatingCapacity: 50, // Calculate from organization Original capacity
   description: '',
   requireContact: true,
   isLoading: false,
@@ -117,7 +122,6 @@ const initialState = {
 
 const GatheringForm = (props) => {
   const [state, dispatch] = useReducer(gatheringReducer, initialState);
-  const { dispatch: gatheringsDispatch } = useContext(GatheringsDispatchContext);
   const { state: appState } = useContext(AppStateContext);
 
   const {
@@ -137,7 +141,13 @@ const GatheringForm = (props) => {
     if (props.gathering) {
       dispatch({type: 'setInitialState', gathering: props.gathering});
     }
-  }, []);
+  }, [props]);
+
+  useEffect(() => {
+    if (!props.gathering && appState) {
+      dispatch({type: 'setSeatingCapacity', seatingCapacity: (appState.organization.seatingCapacity * .2)});
+    }
+  }, [props, appState]);
 
   const classes = useStyles();
 
@@ -303,7 +313,7 @@ const GatheringForm = (props) => {
             onChange={handleChange}
             disabled={isLoading}
           />
-          <FormControlLabel
+          {/* <FormControlLabel
             disabled={isLoading}
             control={
               <Checkbox 
@@ -316,7 +326,7 @@ const GatheringForm = (props) => {
               />
             }
             label="Require Contact"
-          />
+          /> */}
           <Button
             type="submit"
             fullWidth

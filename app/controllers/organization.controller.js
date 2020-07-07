@@ -57,6 +57,12 @@ exports.get = async (req, res) => {
   res.json(organization);
 };
 
+exports.getById = async (req, res) => {
+  const organization = await Organization.findById(req.params.id);
+  //if null send error
+  res.json(organization);
+};
+
 exports.update = async (req, res) => {
   let organization = await Organization.findById(req.body.id);
   organization.userId = req.userId;

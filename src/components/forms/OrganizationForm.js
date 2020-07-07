@@ -117,7 +117,7 @@ const OrganizationForm = () => {
       contact
     ).then(
       response => {
-        appDispatch({type: 'setUserAndOrganization', user: response.user, organization: response.organization});
+        appDispatch({type: 'fetchData'});
       },
       error => {
         const resMessage =

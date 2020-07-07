@@ -85,9 +85,6 @@ const AttendeesTable = (props) => {
   let {
     attendees,
     attendeesCSV,
-    isLoading,
-    prompt,
-    error,
     fetchedAt
   } = state;
 
@@ -123,7 +120,7 @@ const AttendeesTable = (props) => {
         dispatch({type: 'error', error: resMessage});
       }
     );
-  }, [fetchedAt]);
+  }, [fetchedAt, props]);
 
   const toggleCheck = (attendee) => {
     AttendeeService.toggleAttendedStatus(
@@ -148,7 +145,9 @@ const AttendeesTable = (props) => {
 
   return (
     <>
-      <ExportCSV csvData={attendeesCSV} fileName={`${props.gathering.title}`} />
+      {appState.currentUser.isModerator && (
+        <ExportCSV csvData={attendeesCSV} fileName={`${props.gathering.title}`} />
+      )}
       <TableContainer component={Paper}>
         
         <Table className={classes.table} aria-label="simple table">

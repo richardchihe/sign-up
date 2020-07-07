@@ -39,7 +39,6 @@ const CycleSignUp = (props) => {
   const [state, dispatch] = useReducer(singUpReducer, initialState);
   let {
     cycle,
-    isLoading,
     error
   } = state;
 
@@ -61,7 +60,7 @@ const CycleSignUp = (props) => {
         dispatch({type: 'error', error: resMessage});
       }
     );
-  }, []);
+  }, [props]);
 
   return (
     <Container style={{height: '100vh', display: 'flex'}}>

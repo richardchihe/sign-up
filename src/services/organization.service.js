@@ -21,6 +21,11 @@ class OrganizationService {
       });
   }
 
+  async getOrganizationById(id) {
+    const response = await axios.get(API_URL + "id/" + id);
+    return response.data;
+  }
+
   getOrganization(slug) {
     return axios.get(API_URL + slug);
   }

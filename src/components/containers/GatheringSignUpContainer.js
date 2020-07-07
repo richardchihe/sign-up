@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from 'react'; 
+import React, { useEffect, useReducer } from 'react'; 
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -7,14 +7,11 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-
 import moment from 'moment';
 
 import Alert from '../dialogs/Alert';
-import { AppDispatchContext } from '../../contexts/app.context';
 import { SignUpStateContext, SignUpDispatchContext } from '../../contexts/signUp.context';
 import GatheringService from "../../services/gathering.service";
-import BasicPrompt from '../dialogs/BasicPrompt';
 import FormPrompt from '../dialogs/FormPrompt';
 import SignUpForm from '../forms/SignUpForm';
 
@@ -57,7 +54,6 @@ const containerReducer = (state, action) => {
       };
     }
     case 'success': {
-      console.log("Got here!");
       return {
         ...state,
         isLoading: false,
@@ -91,12 +87,9 @@ const initialState = {
 const GatheringSignUpContainer = (props) => { 
   const classes = useStyles();
   const [state, dispatch] = useReducer(containerReducer, initialState);
-  // const { state: signUpState } = useContext(SignUpStateContext);
-  // const { dispatch: signUpDispatch } = useContext(SignUpDispatchContext);
 
   let {
     gathering,
-    isLoading,
     prompt,
     error,
     fetchedAt

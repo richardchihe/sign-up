@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'; 
+import React, { useContext } from 'react'; 
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -44,11 +44,6 @@ const NavBar = () => {
     dispatch({type: 'setUser', user: undefined});
     history.push("/");
   }
-
-  useEffect(() => {
-    // console.log(location.pathname.split('/')[1])
-  }, []);
-
 
   return (
     <>

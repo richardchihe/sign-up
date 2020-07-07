@@ -1,6 +1,5 @@
 import React, { useEffect, useContext, useReducer } from 'react'; 
 import { Button } from '@material-ui/core';
-import Container from '@material-ui/core/Container';
 
 import { AppStateContext } from '../contexts/app.context';
 import { CheckersStateContext, CheckersDispatchContext } from '../contexts/checkers.context';
@@ -83,20 +82,16 @@ const Checkers = () => {
   let {
     checkers,
     createChoice,
-    isLoading,
-    prompt,
     error,
     fetchedAt
   } = state;
 
   useEffect(() => {
     if (appState.currentUser) {
-      console.log("Test");
       CheckerService.getCheckers(
         appState.currentUser.organizationId
       ).then(
         response => {
-          console.log(response);
           dispatch({type: 'setCheckers', checkers: response});
         },
         error => {
@@ -110,7 +105,7 @@ const Checkers = () => {
         }
       );
     }
-  }, [fetchedAt]);
+  }, [fetchedAt, appState]);
 
   useEffect(() => {
     document.title = "Checkers";

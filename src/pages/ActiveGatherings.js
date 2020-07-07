@@ -96,8 +96,6 @@ const Gatherings = () => {
   let {
     gatherings,
     selectedGathering,
-    isLoading,
-    prompt,
     error,
     fetchedAt
   } = state;
@@ -113,7 +111,6 @@ const Gatherings = () => {
         appState.currentUser.organizationId,
       ).then(
         response => {
-          console.log(response);
           dispatch({type: 'setGatherings', gatherings: response.gatherings});
         },
         error => {
@@ -127,18 +124,7 @@ const Gatherings = () => {
         }
       );
     }
-  }, [fetchedAt]);
-
-  const handleClick = (action) => {
-    switch (action) {
-      case 'archiveSelectedCycle': {
-        
-        break;
-      }
-      default: 
-        break;
-    }
-  }
+  }, [fetchedAt, appState]);
 
   return (
     <>

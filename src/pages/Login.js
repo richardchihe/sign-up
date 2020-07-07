@@ -123,7 +123,7 @@ const Login = () => {
     AuthService.login(username, password).then(
       response => {
         dispatch({type: 'success'});
-        appDispatch({type: 'setUser', user: response});
+        appDispatch({type: 'fetchData'});
         if (response.roles.includes("ROLE_MODERATOR")) {
           history.push("/gatherings");
         }

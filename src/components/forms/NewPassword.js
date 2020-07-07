@@ -1,7 +1,5 @@
-import React, { useContext, useReducer } from 'react';
+import React, { useReducer } from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -14,7 +12,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import IconButton from '@material-ui/core/IconButton';
 
-import { AppStateContext } from '../../contexts/app.context';
 import Alert from '../dialogs/Alert';
 import CheckerService from '../../services/checker.service';
 
@@ -99,7 +96,6 @@ const initialState = {
 const NewPassword = (props) => {
   const classes = useStyles();
   const [state, dispatch] = useReducer(checkerReducer, initialState);
-  const { state: appState } = useContext(AppStateContext);
 
   const {
     password,
@@ -119,13 +115,11 @@ const NewPassword = (props) => {
   const handleSubmit = async e =>  {
     e.preventDefault();
     dispatch({type: 'create'});
-    console.log(props.id);
     CheckerService.setPassword(
       props.id,
       password
     ).then(
       response => {
-        console.log(response);
         props.success();
       },
       error => {
@@ -135,8 +129,6 @@ const NewPassword = (props) => {
             error.response.data.message) ||
           error.message ||
           error.toString();
-        console.log(error.response.data);
-        console.log(resMessage);
         if (resMessage.code) {
           dispatch({type: 'error', error: `${resMessage.name} ${resMessage.code}`});
         } else {

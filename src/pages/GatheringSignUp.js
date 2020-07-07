@@ -1,6 +1,5 @@
 import React, { useEffect, useReducer } from 'react'; 
 import Container from '@material-ui/core/Container';
-import AttendeesTable from '../components/tables/AttendeesTable';
 import GatheringSignUpContainer from '../components/containers/GatheringSignUpContainer';
 import GatheringService from '../services/gathering.service';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -39,7 +38,6 @@ const GatheringSignUp = (props) => {
   const [state, dispatch] = useReducer(singUpReducer, initialState);
   let {
     gathering,
-    isLoading,
     error
   } = state;
 
@@ -61,7 +59,7 @@ const GatheringSignUp = (props) => {
         dispatch({type: 'error', error: resMessage});
       }
     );
-  }, []);
+  }, [props]);
 
   return (
     <Container style={{height: '100vh', display: 'flex'}}>

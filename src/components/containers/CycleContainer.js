@@ -1,10 +1,7 @@
-import React, { useEffect, useContext, useReducer } from 'react'; 
+import React, { useEffect, useReducer } from 'react'; 
 import Grid from '@material-ui/core/Grid';
 import { Button } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import FormControl from '@material-ui/core/FormControl';
-import NativeSelect from '@material-ui/core/NativeSelect';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
@@ -13,7 +10,6 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import Alert from '../dialogs/Alert';
 import FormPrompt from '../dialogs/FormPrompt';
 import GatheringForm from '../forms/GatheringForm';
-import { GatheringsStateContext, GatheringsDispatchContext } from '../../contexts/gatherings.context';
 import CycleService from "../../services/cycle.service";
 import BasicPrompt from '../dialogs/BasicPrompt';
 import GatheringContainer from './GatheringContainer';
@@ -81,14 +77,13 @@ const CycleContainer = (props) => {
   let {
     cycle,
     formChoice,
-    isLoading,
     prompt,
     error
   } = state;
 
   useEffect(() => {
     dispatch({type: 'setCycle', cycle: props.cycle});
-  }, []);
+  }, [props]);
 
   const handleClick = (action) => {
     switch (action) {
@@ -152,7 +147,7 @@ const CycleContainer = (props) => {
           <FormGroup row style={{justifyContent: 'space-between'}}>
             <Typography align="center" variant="h6">
               {cycle.title}
-              <a href={`/signup/cycle/${cycle._id}`} target="_blank">
+              <a href={`/signup/cycle/${cycle._id}`} target="_blank" rel="noopener noreferrer">
                 <Button>
                   <VisibilityIcon />
                 </Button>

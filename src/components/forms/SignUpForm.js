@@ -8,7 +8,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import Alert from '../dialogs/Alert';
 import AttendeeService from '../../services/attendee.service';
-import { SignUpStateContext, SignUpDispatchContext } from '../../contexts/signUp.context';
+import { SignUpDispatchContext } from '../../contexts/signUp.context';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -117,7 +117,6 @@ const SignUpForm = (props) => {
         dispatch({type: 'success', success: `You (${response.name}) have successfully signed up!`});
       },
       error => {
-        console.log(error.response.data);
         const resMessage =
           (error.response &&
             error.response.data &&

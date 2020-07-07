@@ -94,10 +94,7 @@ const CheckersTable = (props) => {
   let {
     actionChoice,
     checker,
-    isLoading,
-    prompt,
     error,
-    fetchedAt
   } = state;
 
   const toggleDeletedStatus = () => {

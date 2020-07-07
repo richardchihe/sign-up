@@ -121,14 +121,12 @@ const CheckerForm = (props) => {
   const handleSubmit = async e =>  {
     e.preventDefault();
     dispatch({type: 'create'});
-    console.log("Test");
     CheckerService.registerChecker(
       appState.currentUser.organizationId,
       username,
       password
     ).then(
       response => {
-        console.log(response);
         props.success();
       },
       error => {
@@ -138,8 +136,6 @@ const CheckerForm = (props) => {
             error.response.data.message) ||
           error.message ||
           error.toString();
-        console.log(error.response.data);
-        console.log(resMessage);
         if (resMessage.code) {
           dispatch({type: 'error', error: `${resMessage.name} ${resMessage.code}`});
         } else {

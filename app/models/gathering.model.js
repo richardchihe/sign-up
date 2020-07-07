@@ -29,7 +29,7 @@ const gatheringSchema = new mongoose.Schema({
     required: true
   },
   seatingCapacity: {
-    type: String,
+    type: Number,
     required: true
   },
   description: {

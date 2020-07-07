@@ -16,6 +16,8 @@ module.exports = function(app) {
     controller.new
   );
 
+  app.get("/api/organization/id/:id", controller.getById);
+
   app.get("/api/organization/:slug", controller.get);
 
   app.put(

@@ -5,9 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import FormControl from '@material-ui/core/FormControl';
 import NativeSelect from '@material-ui/core/NativeSelect';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import moment from 'moment';
 
@@ -20,7 +17,6 @@ import GatheringForm from '../components/forms/GatheringForm';
 import { AppStateContext } from '../contexts/app.context';
 import { GatheringsStateContext, GatheringsDispatchContext } from '../contexts/gatherings.context';
 import CycleService from "../services/cycle.service";
-import BasicPrompt from '../components/dialogs/BasicPrompt';
 import CycleContainer from '../components/containers/CycleContainer';
 import GatheringContainer from '../components/containers/GatheringContainer';
 import AttendeesTable from '../components/tables/AttendeesTable';
@@ -153,8 +149,6 @@ const Gatherings = () => {
     createChoice,
     selectedCycle,
     selectedGathering,
-    isLoading,
-    prompt,
     error,
     fetchedAt,
     filter
@@ -169,7 +163,6 @@ const Gatherings = () => {
       filter,
     ).then(
       response => {
-        // console.log(response);
         dispatch({type: 'setCyclesAndGatherings', cycles: response.cycles, gatherings: response.gatherings});
       },
       error => {
@@ -182,7 +175,7 @@ const Gatherings = () => {
         dispatch({type: 'error', error: resMessage});
       }
     );
-  }, [fetchedAt]);
+  }, [fetchedAt, filter]);
 
   const handleClick = (action) => {
     switch (action) {
@@ -250,7 +243,20 @@ const Gatherings = () => {
               cancel={() => {dispatch({type: 'setChoice', createChoice: ''})}}
             />
           )}
-          {(createChoice === 'gathering') && (
+          {(createChoice === 'gathering' && selectedCycle) && (
+            <FormPrompt 
+              isOpen={true} 
+              title={`Create Gathering for ${selectedCycle.title}`} 
+              form={
+                <GatheringForm 
+                  cycleId={selectedCycle._id}
+                  success={(gathering) => {dispatch({type: 'fetchData'})}}
+                />
+              }
+              cancel={() => {dispatch({type: 'setChoice', formChoice: ''})}}
+            />
+          )}
+          {(createChoice === 'gathering' && !selectedCycle) && (
             <FormPrompt 
               isOpen={true} 
               title={'Create Gathering'} 

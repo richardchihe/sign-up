@@ -98,6 +98,7 @@ const initialState = {
   username: '',
   email: '',
   password: '',
+  confirmPassword: '',
   isLoading: false,
   error: ''
 }

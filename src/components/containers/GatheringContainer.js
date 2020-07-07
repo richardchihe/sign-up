@@ -12,10 +12,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import moment from 'moment';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import { Link } from 'react-router-dom'; 
 
 import Alert from '../dialogs/Alert';
-import { AppDispatchContext } from '../../contexts/app.context';
 import { GatheringsDispatchContext } from '../../contexts/gatherings.context';
 import GatheringService from "../../services/gathering.service";
 import BasicPrompt from '../dialogs/BasicPrompt';
@@ -109,14 +107,13 @@ const GatheringContainer = (props) => {
   let {
     gathering,
     attendeesCount,
-    isLoading,
     prompt,
     error
   } = state;
 
   useEffect(() => {
     dispatch({type: 'setGathering', gathering: props.gathering});
-  }, []);
+  }, [props]);
 
   useEffect(() => {
     GatheringService.getAttendeesCount(
@@ -135,7 +132,7 @@ const GatheringContainer = (props) => {
         dispatch({type: 'error', error: resMessage});
       }
     );
-  }, [gathering]);
+  }, [gathering, props]);
 
   const handleClick = (action) => {
     switch (action) {
@@ -233,7 +230,7 @@ const GatheringContainer = (props) => {
                   >
                     <EditIcon />
                   </Button>
-                  <a href={`/signup/gathering/${gathering._id}`} target="_blank">
+                  <a href={`/signup/gathering/${gathering._id}`} target="_blank"  rel="noopener noreferrer">
                     <Button 
                       className={classes.view}>
                       <VisibilityIcon />
