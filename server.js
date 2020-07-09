@@ -39,7 +39,7 @@ db.mongoose
     process.exit();
   });
 
-app.use(favicon(__dirname + '/build/Favicon.ico'));
+app.use(favicon(__dirname + '/build/favicon.ico'));
 
 app.use(express.static(__dirname + '/build'));
 
