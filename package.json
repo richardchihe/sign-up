@@ -27,7 +27,7 @@
     "react-scripts": "3.4.1",
     "serve-favicon": "^2.5.0",
     "slugify": "^1.4.0",
-    "xlsx": "^0.16.3"
+    "xlsx": "^0.17.0"
   },
   "scripts": {
     "start": "react-scripts start",
